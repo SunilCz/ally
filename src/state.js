@@ -1,0 +1,297 @@
+/** @typedef {import('./index.js').default} AllyWidget */
+
+/** @type {{ [methodName: string]: (this: AllyWidget, ...args: any[]) => any }} */
+export const stateMethods = {
+
+  storageAvailable() {
+    try {
+      const test = '__ally_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  fetchCookie(name) {
+    const cookieName = name + '=';
+    try {
+      const decodedCookie = decodeURIComponent(document.cookie);
+      return decodedCookie.split(';')
+        .map(c => c.trim())
+        .find(c => c.startsWith(cookieName))
+        ?.substring(cookieName.length) || '{}';
+    } catch (e) {
+      console.warn('[AllyWidget] Error reading cookie:', e);
+      return '{}';
+    }
+  },
+
+  storeCookie(name, value, days) {
+    try {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = 'expires=' + d.toUTCString();
+      const isSecure = window.location.protocol === 'https:';
+      document.cookie = name + '=' + value + ';' + expires + ';path=/;SameSite=Strict' + (isSecure ? ';Secure' : '');
+    } catch (e) {
+      console.warn('[AllyWidget] Error setting cookie:', e);
+    }
+  },
+
+  getSavedLanguage() {
+    try {
+      if (this.storageAvailable()) {
+        const stored = localStorage.getItem(this.storageKey);
+        if (stored) {
+          const config = JSON.parse(stored);
+          if (config.lang) return config.lang;
+        }
+      }
+      const cookieVal = this.fetchCookie(this.storageKey);
+      if (cookieVal && cookieVal !== '') {
+        const config = JSON.parse(cookieVal);
+        if (config.lang) return config.lang;
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  },
+
+  getBrowserLanguage() {
+    if (typeof navigator === 'undefined') return 'en';
+    const supportedCodes = this.supportedLanguages.map(lang => lang.code);
+    const browserLanguages = navigator.languages
+      ? [...navigator.languages]
+      : [navigator.language || 'en'];
+
+    for (const browserLang of browserLanguages) {
+      const primaryCode = browserLang.split('-')[0].toLowerCase();
+      if (supportedCodes.includes(primaryCode)) return primaryCode;
+    }
+    return 'en';
+  },
+
+  getDefaultLanguage() {
+    const savedLang = this.getSavedLanguage();
+    if (savedLang) {
+      const supportedCodes = this.supportedLanguages.map(lang => lang.code);
+      if (supportedCodes.includes(savedLang)) return savedLang;
+    }
+    return this.getBrowserLanguage();
+  },
+
+  isDevMode() {
+    if (typeof window === 'undefined') return false;
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('ally-dev') === 'true' || urlParams.get('acc-dev') === 'true';
+    } catch {
+      return false;
+    }
+  },
+
+  getDataAttributeOptions() {
+    const options = {};
+    if (typeof document === 'undefined') return options;
+    const attributes = ['lang', 'position', 'offset', 'size', 'icon'];
+
+    const assignValue = (key, value) => {
+      if (value === null || typeof value === 'undefined' || value === '') return;
+      switch (key) {
+        case 'lang': {
+          const lang = String(value).trim();
+          if (lang) options.lang = lang;
+          break;
+        }
+        case 'position': {
+          const position = String(value).trim();
+          if (position) options.position = position;
+          break;
+        }
+        case 'offset': {
+          const normalized = this.normalizeOffset(value);
+          if (normalized) options.offset = normalized;
+          break;
+        }
+        case 'size': {
+          const normalizedSize = this.normalizeButtonSize(value);
+          if (normalizedSize) options.size = normalizedSize;
+          break;
+        }
+        case 'icon': {
+          const icon = String(value).trim();
+          if (icon) options.icon = icon;
+          break;
+        }
+        default: break;
+      }
+    };
+
+    const inspectElement = (el) => {
+      if (!el) return;
+      attributes.forEach(key => {
+        const attrName = `data-ally-${key}`;
+        const fallback = `data-acc-${key}`;
+        const attrValue = el.getAttribute ? (el.getAttribute(attrName) || el.getAttribute(fallback)) : null;
+        assignValue(key, attrValue);
+      });
+    };
+
+    const scriptCandidates = [];
+    if (document.currentScript) scriptCandidates.push(document.currentScript);
+    document.querySelectorAll('script[data-ally-lang],script[data-ally-position],script[data-ally-offset],script[data-ally-size],script[data-ally-icon]').forEach(script => {
+      if (!scriptCandidates.includes(script)) scriptCandidates.push(script);
+    });
+    scriptCandidates.forEach(inspectElement);
+
+    attributes.forEach(key => {
+      if (options[key] !== undefined) return;
+      const el = document.querySelector(`[data-ally-${key}]`) || document.querySelector(`[data-acc-${key}]`);
+      if (el) assignValue(key, el.getAttribute(`data-ally-${key}`) || el.getAttribute(`data-acc-${key}`));
+    });
+
+    return options;
+  },
+
+  normalizeOffset(value) {
+    if (!value && value !== 0) return undefined;
+    let parts = [];
+    if (Array.isArray(value)) {
+      parts = value;
+    } else if (typeof value === 'string') {
+      parts = value.split(/[, ]+/);
+    } else {
+      parts = [value];
+    }
+    const parsed = parts
+      .map(part => {
+        const number = Number(part);
+        return Number.isFinite(number) ? Math.round(number) : null;
+      })
+      .filter(number => number !== null);
+
+    if (!parsed.length) return undefined;
+    if (parsed.length === 1) parsed.push(parsed[0]);
+    return [parsed[0], parsed[1] !== undefined ? parsed[1] : parsed[0]];
+  },
+
+  normalizeButtonSize(value) {
+    const fallback = this.widgetTheme?.buttonSize || '52px';
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return `${Math.max(24, Math.round(value))}px`;
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return fallback;
+      if (/^\d+(\.\d+)?(px|em|rem|%)$/i.test(trimmed)) return trimmed;
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric)) return `${Math.max(24, Math.round(numeric))}px`;
+      return trimmed;
+    }
+    return fallback;
+  },
+
+  toggleDisplay(el, state) {
+    if (!el) return;
+    try {
+      el.style.display = (typeof state === 'undefined')
+        ? (el.style.display === 'none' ? 'block' : 'none')
+        : (state ? 'block' : 'none');
+    } catch (e) {
+      console.warn('[AllyWidget] Error toggling element:', e);
+    }
+  },
+
+  isSystemControlledPreference(key) {
+    const systemDefaults = this.widgetConfig?.systemDefaults || {};
+    return Object.prototype.hasOwnProperty.call(systemDefaults, key);
+  },
+
+  hasExplicitStatePreference(key) {
+    const states = this.widgetConfig?.states || {};
+    if (!Object.prototype.hasOwnProperty.call(states, key)) return false;
+    return !this.isSystemControlledPreference(key);
+  },
+
+  hasExplicitColorFilterPreference() {
+    const states = this.widgetConfig?.states || {};
+    const systemDefaults = this.widgetConfig?.systemDefaults || {};
+    const keys = Array.isArray(this.colorFilterKeys) ? this.colorFilterKeys : [];
+    return keys.some((key) =>
+      Object.prototype.hasOwnProperty.call(states, key) &&
+      !Object.prototype.hasOwnProperty.call(systemDefaults, key)
+    );
+  },
+
+  updateState(payload, options = {}) {
+    const source = options.source || 'user';
+    const previousStates = this.widgetConfig.states || {};
+    const previousSystemDefaults = this.widgetConfig.systemDefaults || {};
+    const nextStates = { ...previousStates, ...payload };
+    const nextSystemDefaults = { ...previousSystemDefaults };
+    const keys = Object.keys(payload || {});
+
+    if (source === 'system') {
+      keys.forEach((key) => { nextSystemDefaults[key] = payload[key]; });
+    } else {
+      keys.forEach((key) => {
+        if (Object.prototype.hasOwnProperty.call(nextSystemDefaults, key)) {
+          delete nextSystemDefaults[key];
+        }
+      });
+    }
+
+    const updatedConfig = { ...this.widgetConfig, states: nextStates, systemDefaults: nextSystemDefaults };
+    this.saveConfig(updatedConfig);
+    return updatedConfig;
+  },
+
+  saveConfig(newConfig) {
+    this.widgetConfig = { ...this.widgetConfig, ...newConfig };
+    const data = JSON.stringify(this.widgetConfig);
+    if (this.storageAvailable()) {
+      try {
+        localStorage.setItem(this.storageKey, data);
+      } catch {
+        this.storeCookie(this.storageKey, data, 365);
+      }
+    } else {
+      this.storeCookie(this.storageKey, data, 365);
+    }
+  },
+
+  retrieveState(key) {
+    return this.widgetConfig.states ? this.widgetConfig.states[key] : undefined;
+  },
+
+  loadConfig(cache = true) {
+    if (cache) return this.widgetConfig;
+    const savedConfig = this.fetchSavedConfig();
+    if (savedConfig) {
+      try {
+        this.widgetConfig = JSON.parse(savedConfig);
+      } catch (e) {
+        console.warn('[AllyWidget] Error parsing config:', e);
+        this.widgetConfig = {};
+      }
+    }
+    return this.widgetConfig;
+  },
+
+  fetchSavedConfig() {
+    if (this.storageAvailable()) {
+      try {
+        const stored = localStorage.getItem(this.storageKey);
+        if (stored) return stored;
+      } catch (e) {
+        console.warn('[AllyWidget] localStorage failed, falling back to cookies:', e);
+      }
+    }
+    const cookieVal = this.fetchCookie(this.storageKey);
+    return cookieVal && cookieVal !== '' ? cookieVal : '{}';
+  }
+
+};

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ally Widget - Test Page</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: #222; background: #f9f9f9; }
+    .skip-to-main { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip-to-main:focus { position: static; width: auto; height: auto; padding: 8px 16px; background: #0066cc; color: #fff; text-decoration: none; border-radius: 4px; z-index: 1000; }
+
+    header { background: #1a1a2e; color: #eee; padding: 24px 32px; }
+    header h1 { font-size: 1.5rem; font-weight: 700; }
+    header p { opacity: 0.75; margin-top: 4px; }
+
+    nav { background: #16213e; padding: 12px 32px; }
+    nav a { color: #a8c0ff; text-decoration: none; margin-right: 20px; font-size: 0.9rem; }
+    nav a:hover { text-decoration: underline; }
+
+    main { max-width: 860px; margin: 40px auto; padding: 0 24px 80px; }
+
+    .section { margin-bottom: 48px; }
+    .section h2 { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+    .section h3 { font-size: 1.05rem; font-weight: 600; color: #333; margin: 20px 0 8px; }
+    .section p { margin-bottom: 12px; }
+
+    /* Animations for "Stop Animations" feature */
+    .animated-box {
+      width: 60px; height: 60px; background: #4f46e5; border-radius: 8px;
+      animation: spin 3s linear infinite;
+      display: inline-block; margin: 8px;
+    }
+    .animated-pulse {
+      width: 60px; height: 60px; background: #ef4444; border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+      display: inline-block; margin: 8px;
+    }
+    .animated-slide {
+      width: 100px; height: 20px; background: #10b981; border-radius: 4px;
+      animation: slide 2s ease-in-out infinite alternate;
+      display: inline-block; margin: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } }
+    @keyframes slide { from { transform: translateX(0); } to { transform: translateX(200px); } }
+
+    /* Images section */
+    .img-grid { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0; }
+    .img-grid img { width: 160px; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+
+    /* Links section */
+    .link-list a { color: #0066cc; display: inline-block; margin: 4px 12px 4px 0; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { padding: 10px 14px; text-align: left; border: 1px solid #ddd; }
+    th { background: #f0f0f0; font-weight: 600; }
+    tr:nth-child(even) { background: #f9f9f9; }
+
+    /* Form */
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; }
+    input[type="text"], input[type="email"], select, textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px;
+      font-size: 1rem; font-family: inherit;
+    }
+    textarea { height: 80px; resize: vertical; }
+    button[type="submit"] {
+      background: #4f46e5; color: #fff; border: none; padding: 10px 24px;
+      border-radius: 6px; font-size: 1rem; cursor: pointer; font-family: inherit;
+    }
+    button[type="submit"]:hover { background: #4338ca; }
+
+    /* Event log panel */
+    #event-log { background: #1e1e2e; color: #a8c0ff; font-family: monospace; font-size: 0.82rem;
+      padding: 16px; border-radius: 8px; height: 180px; overflow-y: auto; }
+    #event-log .log-entry { margin-bottom: 4px; border-bottom: 1px solid #2e2e4e; padding-bottom: 4px; }
+    #event-log .log-entry.open { color: #86efac; }
+    #event-log .log-entry.close { color: #fca5a5; }
+    #event-log .log-entry.toggle { color: #fde68a; }
+    #event-log .log-entry.reset { color: #c4b5fd; }
+
+    /* Keyboard shortcut hint */
+    .hint { font-size: 0.82rem; color: #666; margin-top: 8px; }
+    kbd { background: #eee; border: 1px solid #ccc; border-radius: 4px; padding: 2px 6px; font-size: 0.8rem; }
+
+    blockquote { border-left: 4px solid #4f46e5; padding-left: 16px; color: #555; font-style: italic; margin: 12px 0; }
+
+    footer { text-align: center; padding: 24px; color: #888; font-size: 0.85rem; background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+  <a href="#main" class="skip-to-main">Skip to main content</a>
+
+  <header>
+    <h1>Ally Widget — Test Page</h1>
+    <p>Use this page to test all accessibility features. Press <kbd>Alt+A</kbd> to toggle the widget.</p>
+  </header>
+
+  <nav aria-label="Primary navigation">
+    <a href="#animations">Animations</a>
+    <a href="#images">Images</a>
+    <a href="#typography">Typography</a>
+    <a href="#links">Links</a>
+    <a href="#table">Table</a>
+    <a href="#form">Form</a>
+    <a href="#tts">Text to Speech</a>
+    <a href="#events">Event Log</a>
+  </nav>
+
+  <main id="main">
+
+    <!-- Animations -->
+    <section class="section" id="animations" aria-labelledby="animations-heading">
+      <h2 id="animations-heading">Animations (test: Stop Animations)</h2>
+      <p>Enable <strong>Stop Animations</strong> in the widget to pause all motion below.</p>
+      <div aria-label="Animated shapes" role="img">
+        <span class="animated-box" aria-hidden="true"></span>
+        <span class="animated-pulse" aria-hidden="true"></span>
+        <span class="animated-slide" aria-hidden="true"></span>
+      </div>
+    </section>
+
+    <!-- Images -->
+    <section class="section" id="images" aria-labelledby="images-heading">
+      <h2 id="images-heading">Images (test: Hide Images)</h2>
+      <p>Enable <strong>Hide Images</strong> to remove all images from the page.</p>
+      <div class="img-grid">
+        <img src="https://picsum.photos/seed/ally1/320/240" alt="Abstract landscape 1" width="160" height="120" />
+        <img src="https://picsum.photos/seed/ally2/320/240" alt="Abstract landscape 2" width="160" height="120" />
+        <img src="https://picsum.photos/seed/ally3/320/240" alt="Abstract landscape 3" width="160" height="120" />
+        <img src="https://picsum.photos/seed/ally4/320/240" alt="Abstract landscape 4" width="160" height="120" />
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section" id="typography" aria-labelledby="typography-heading">
+      <h2 id="typography-heading">Typography (test: Font Size, Bold Text, Line Height, Letter Spacing, Dyslexia Font)</h2>
+      <h3>Article: The Importance of Web Accessibility</h3>
+      <p>Web accessibility ensures that websites, tools, and technologies are designed and developed so that people with disabilities can use them. More specifically, people can perceive, understand, navigate, and interact with the Web.</p>
+      <p>Approximately 15% of the world's population lives with some form of disability. Many of them rely on assistive technologies or specific accessibility features to browse the web.</p>
+      <blockquote>
+        "The power of the Web is in its universality. Access by everyone regardless of disability is an essential aspect." — Tim Berners-Lee, W3C Director
+      </blockquote>
+      <p>Accessibility benefits all users, not just those with disabilities. Good contrast, readable fonts, and well-structured content improve the experience for everyone, including those using mobile devices, aging populations, and users in low-bandwidth environments.</p>
+      <h3>WCAG Principles</h3>
+      <ul style="padding-left: 24px; margin-bottom: 12px;">
+        <li><strong>Perceivable</strong> — Information and UI components must be presentable in ways users can perceive.</li>
+        <li><strong>Operable</strong> — UI components and navigation must be operable.</li>
+        <li><strong>Understandable</strong> — Information and operation must be understandable.</li>
+        <li><strong>Robust</strong> — Content must be interpreted reliably by assistive technologies.</li>
+      </ul>
+    </section>
+
+    <!-- Links -->
+    <section class="section" id="links" aria-labelledby="links-heading">
+      <h2 id="links-heading">Links (test: Highlight Links)</h2>
+      <p>Enable <strong>Highlight Links</strong> to visually distinguish all links.</p>
+      <nav class="link-list" aria-label="Sample links">
+        <a href="https://www.w3.org/WAI/" target="_blank" rel="noopener">W3C Web Accessibility Initiative</a>
+        <a href="https://www.a11yproject.com/" target="_blank" rel="noopener">The A11Y Project</a>
+        <a href="https://webaim.org/" target="_blank" rel="noopener">WebAIM</a>
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility" target="_blank" rel="noopener">MDN Accessibility</a>
+        <a href="https://www.deque.com/axe/" target="_blank" rel="noopener">axe Accessibility Tools</a>
+      </nav>
+    </section>
+
+    <!-- Table -->
+    <section class="section" id="table" aria-labelledby="table-heading">
+      <h2 id="table-heading">Data Table</h2>
+      <p>A properly structured table with headers for screen readers.</p>
+      <div style="overflow-x:auto;">
+        <table aria-label="WCAG Success Criteria examples">
+          <caption style="text-align:left; font-weight:600; margin-bottom:8px;">Sample WCAG 2.1 Success Criteria</caption>
+          <thead>
+            <tr>
+              <th scope="col">Criterion</th>
+              <th scope="col">Level</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1.1.1 Non-text Content</td><td>A</td><td>All non-text content has a text alternative.</td></tr>
+            <tr><td>1.4.3 Contrast (Minimum)</td><td>AA</td><td>Text has a contrast ratio of at least 4.5:1.</td></tr>
+            <tr><td>2.1.1 Keyboard</td><td>A</td><td>All functionality is accessible via keyboard.</td></tr>
+            <tr><td>2.4.7 Focus Visible</td><td>AA</td><td>Keyboard focus indicator is visible.</td></tr>
+            <tr><td>3.1.1 Language of Page</td><td>A</td><td>Default human language of a page is programmatically determined.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Form -->
+    <section class="section" id="form" aria-labelledby="form-heading">
+      <h2 id="form-heading">Form (test: keyboard navigation)</h2>
+      <form aria-label="Sample contact form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="name">Full Name <span aria-hidden="true">*</span></label>
+          <input type="text" id="name" name="name" autocomplete="name" aria-required="true" placeholder="Jane Doe" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address <span aria-hidden="true">*</span></label>
+          <input type="email" id="email" name="email" autocomplete="email" aria-required="true" placeholder="jane@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="topic">Topic</label>
+          <select id="topic" name="topic">
+            <option value="">Select a topic</option>
+            <option value="bug">Bug report</option>
+            <option value="feature">Feature request</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" aria-multiline="true" placeholder="Your message..."></textarea>
+        </div>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
+    <!-- TTS Article -->
+    <section class="section" id="tts" aria-labelledby="tts-heading">
+      <h2 id="tts-heading">Text to Speech</h2>
+      <p>Enable <strong>Text to Speech</strong> in the widget, then click on any paragraph, heading, or element to hear it read aloud using the browser's Web Speech API.</p>
+      <h3>Sample Text for TTS</h3>
+      <p id="tts-p1">The early bird catches the worm. This proverb emphasizes the importance of starting work early and being proactive in achieving your goals.</p>
+      <p id="tts-p2">Accessibility is not a feature. It is a social trend. Making digital experiences accessible means treating all users with equal respect and dignity.</p>
+      <p id="tts-p3">Web standards like HTML5, WAI-ARIA, and WCAG provide the foundation for building accessible, interoperable web experiences that work across devices and assistive technologies.</p>
+    </section>
+
+    <!-- Event Log -->
+    <section class="section" id="events" aria-labelledby="events-heading">
+      <h2 id="events-heading">Event Callbacks Log</h2>
+      <p>All widget callbacks (onOpen, onClose, onFeatureToggle, onReset) are logged below in real time.</p>
+      <p class="hint">Keyboard shortcut: <kbd>Alt</kbd>+<kbd>A</kbd> toggles the widget</p>
+      <div id="event-log" aria-live="polite" aria-label="Widget event log" role="log">
+        <div class="log-entry" style="color:#666;">[ready] Ally Widget event log initialized</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Ally Widget test page &mdash; <a href="https://github.com/SunilCz/ally" target="_blank" rel="noopener">github.com/SunilCz/ally</a></p>
+  </footer>
+
+  <script>
+    // Configure widget BEFORE loading the script
+    window.AllyWidgetOptions = {
+      position: 'bottom-right',
+      lang: 'en',
+      poweredByText: 'Ally Widget',
+      poweredByUrl: 'https://github.com/SunilCz/ally',
+      storageKey: 'ally-test-page',
+      primaryColor: '#4f46e5',
+
+      onOpen() {
+        log('open', '[onOpen] Widget menu opened');
+      },
+
+      onClose() {
+        log('close', '[onClose] Widget menu closed');
+      },
+
+      onFeatureToggle(key, enabled) {
+        log('toggle', `[onFeatureToggle] "${key}" → ${enabled ? 'ON' : 'OFF'}`);
+      },
+
+      onReset() {
+        log('reset', '[onReset] All settings reset');
+      }
+    };
+
+    function log(type, message) {
+      const panel = document.getElementById('event-log');
+      if (!panel) return;
+      const entry = document.createElement('div');
+      entry.className = 'log-entry ' + type;
+      const ts = new Date().toLocaleTimeString();
+      entry.textContent = `[${ts}] ${message}`;
+      panel.insertBefore(entry, panel.firstChild);
+      // Keep only last 50 entries
+      while (panel.children.length > 50) panel.removeChild(panel.lastChild);
+    }
+  </script>
+
+  <!-- Load from the built dist file -->
+  <script src="dist/ally-widget.js"></script>
+
+</body>
+</html>

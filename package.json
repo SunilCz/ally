@@ -1,0 +1,48 @@
+{
+  "name": "ally-widget",
+  "version": "1.0.0",
+  "description": "A lightweight, customizable accessibility widget for any website. Supports CDN, direct download, and npm.",
+  "type": "module",
+  "main": "./dist/ally-widget.cjs.js",
+  "module": "./dist/ally-widget.esm.js",
+  "browser": "./dist/ally-widget.min.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ally-widget.esm.js",
+      "require": "./dist/ally-widget.cjs.js",
+      "browser": "./dist/ally-widget.min.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
+    "lint": "eslint src --max-warnings=0",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "widget",
+    "screen-reader",
+    "contrast",
+    "tts",
+    "dyslexia"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.34.0",
+    "rollup-plugin-string": "^3.0.0"
+  }
+}
