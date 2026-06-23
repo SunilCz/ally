@@ -752,7 +752,7 @@ export const featureMethods = {
       severity = 'moderate';
     }
 
-    if (displayCount <= 0) {
+    if (displayCount <= 0 || this.options?.showViolationBubble === false) {
       bubble.textContent = '';
       bubble.hidden = true;
       bubble.removeAttribute('data-severity');

@@ -13,6 +13,7 @@
  *   offset:          [20, 20]       // [horizontal, vertical] px from edge
  *   size:            '52px'         // toggle button size (px / em / rem / %)
  *   keyboardShortcut: true          // Alt+A to toggle (set false to disable)
+ *   showViolationBubble: true       // red badge on toggle button (set false to hide)
  *
  *   // ── Language ─────────────────────────────────────────────────────────────
  *   lang:            'en' | 'ne'

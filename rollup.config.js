@@ -4,7 +4,7 @@ import replace from '@rollup/plugin-replace';
 import { string } from 'rollup-plugin-string';
 
 const banner = `/*!
- * Ally Widget v1.0.2
+ * Ally Widget v1.0.3
  * Released under the MIT License
  */`;
 
