@@ -1,5 +1,5 @@
 /*!
- * Ally Widget v1.0.0
+ * Ally Widget v1.0.2
  * Released under the MIT License
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
@@ -440,11 +440,10 @@ if (typeof window !== 'undefined') {
   window.AllyWidget = AllyWidget;
 }
 
-// Auto-init for CDN / script-tag usage.
-// Skipped when:
-//   • running server-side (no document)
-//   • window.AllyWidgetOptions.autoInit === false  (opt-out for manual control)
-if (typeof document !== 'undefined') {
+// Auto-init only in IIFE/CDN builds (__ALLY_AUTO_INIT__ is replaced at build time).
+// ESM and CJS builds set this to false so importing the module never triggers
+// a default-themed widget that would conflict with AllyWidget.init() calls.
+if (__ALLY_AUTO_INIT__ && typeof document !== 'undefined') {
   const globalAutoInitOptions = (
     typeof window !== 'undefined' &&
     window.AllyWidgetOptions &&

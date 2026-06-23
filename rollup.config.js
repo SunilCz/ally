@@ -1,23 +1,28 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
+import replace from '@rollup/plugin-replace';
 import { string } from 'rollup-plugin-string';
 
 const banner = `/*!
- * Ally Widget v1.0.0
+ * Ally Widget v1.0.2
  * Released under the MIT License
  */`;
 
-export default {
+const sharedPlugins = [
+  string({ include: '**/*.css' }),
+  nodeResolve()
+];
+
+// IIFE builds (CDN / <script> tag) — auto-init ON
+const iifeConfig = {
   input: 'src/index.js',
   output: [
-    // IIFE for <script> tag / CDN (unminified)
     {
       file: 'dist/ally-widget.js',
       format: 'iife',
       name: 'AllyWidget',
       banner
     },
-    // IIFE minified — use this for CDN link
     {
       file: 'dist/ally-widget.min.js',
       format: 'iife',
@@ -25,14 +30,23 @@ export default {
       sourcemap: true,
       banner,
       plugins: [terser()]
-    },
-    // ESM — for Vite / webpack bundlers
+    }
+  ],
+  plugins: [
+    replace({ __ALLY_AUTO_INIT__: 'true', preventAssignment: true }),
+    ...sharedPlugins
+  ]
+};
+
+// ESM + CJS builds (bundlers / Node) — auto-init OFF
+const moduleConfig = {
+  input: 'src/index.js',
+  output: [
     {
       file: 'dist/ally-widget.esm.js',
       format: 'esm',
       banner
     },
-    // CJS — for Node / SSR / older bundlers
     {
       file: 'dist/ally-widget.cjs.js',
       format: 'cjs',
@@ -41,7 +55,9 @@ export default {
     }
   ],
   plugins: [
-    string({ include: '**/*.css' }),
-    nodeResolve()
+    replace({ __ALLY_AUTO_INIT__: 'false', preventAssignment: true }),
+    ...sharedPlugins
   ]
 };
+
+export default [iifeConfig, moduleConfig];
