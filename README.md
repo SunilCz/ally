@@ -355,23 +355,92 @@ Supported attributes: `data-ally-lang`, `data-ally-position`, `data-ally-offset`
 
 ## Framework Integration
 
-### Next.js (App Router)
+The widget is browser-only. `AllyWidget.init()` returns `null` when called server-side, so it is always safe to import — but you must ensure it mounts after the DOM is ready.
 
-The widget is browser-only. Use `AllyWidget.init()` inside `useEffect` so it never runs on the server.
+| Stack | Approach |
+|---|---|
+| Plain HTML | Script tag — just works |
+| React / Vite | `useEffect` dynamic import |
+| Next.js App Router | `'use client'` component + `useEffect` |
+| Next.js Pages Router | `useEffect` in `_app.jsx` |
+| Vue 3 | `onMounted` in `App.vue` |
+| Nuxt 3 | `.client.js` plugin |
+| SvelteKit | `onMount` in `+layout.svelte` |
+| Astro | `<script>` with `is:inline` in Layout |
+| WordPress | `wp_enqueue_script` in `functions.php` |
+| Laravel / Blade | Script tag in layout |
+| Angular | `ngAfterViewInit` in `AppComponent` |
+| PHP (plain) | Script tag before `</body>` |
+
+---
+
+### Plain HTML
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>...</head>
+<body>
+  <!-- your content -->
+
+  <script>
+    window.AllyWidgetOptions = {
+      position: 'bottom-right',
+      primaryColor: '#6366f1',
+      lang: 'en'
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"></script>
+</body>
+</html>
+```
+
+---
+
+### React (Vite / CRA)
 
 ```jsx
-// components/AllyWidgetLoader.jsx
+// src/components/AllyWidget.jsx
+import { useEffect } from 'react'
+
+export default function AllyWidget() {
+  useEffect(() => {
+    import('ally-widget').then(({ default: AllyWidget }) => {
+      AllyWidget.init({ primaryColor: '#6366f1' })
+    })
+  }, [])
+
+  return null
+}
+```
+
+```jsx
+// src/App.jsx
+import AllyWidget from './components/AllyWidget'
+
+export default function App() {
+  return (
+    <>
+      <YourApp />
+      <AllyWidget />
+    </>
+  )
+}
+```
+
+---
+
+### Next.js (App Router)
+
+```jsx
+// components/AllyWidget.jsx
 'use client'
 import { useEffect } from 'react'
 
-export default function AllyWidgetLoader() {
+export default function AllyWidget() {
   useEffect(() => {
     import('ally-widget').then(({ default: AllyWidget }) => {
-      AllyWidget.init({
-        position: 'bottom-right',
-        primaryColor: '#6366f1',
-        lang: 'en'
-      })
+      AllyWidget.init({ primaryColor: '#6366f1', lang: 'en' })
     })
   }, [])
 
@@ -381,21 +450,47 @@ export default function AllyWidgetLoader() {
 
 ```jsx
 // app/layout.jsx
-import AllyWidgetLoader from '@/components/AllyWidgetLoader'
+import AllyWidget from '@/components/AllyWidget'
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
         {children}
-        <AllyWidgetLoader />
+        <AllyWidget />
       </body>
     </html>
   )
 }
 ```
 
-### Next.js (Pages Router / `_document`)
+**Or — CDN via `next/script` (zero npm install):**
+
+```jsx
+// app/layout.jsx
+import Script from 'next/script'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script id="ally-cfg" strategy="beforeInteractive">{`
+          window.AllyWidgetOptions = { primaryColor: '#6366f1' };
+        `}</Script>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"
+          strategy="afterInteractive"
+        />
+      </body>
+    </html>
+  )
+}
+```
+
+---
+
+### Next.js (Pages Router)
 
 ```jsx
 // pages/_app.jsx
@@ -412,43 +507,106 @@ export default function App({ Component, pageProps }) {
 }
 ```
 
-### Next.js — CDN via `next/script` (zero npm install)
+---
 
-```jsx
-// app/layout.jsx
-import Script from 'next/script'
+### Vue 3 (Vite)
 
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body>
-        {children}
-        <Script id="ally-config" strategy="beforeInteractive">{`
-          window.AllyWidgetOptions = { primaryColor: '#6366f1' };
-        `}</Script>
-        <Script
-          src="https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"
-          strategy="afterInteractive"
-        />
-      </body>
-    </html>
-  )
-}
+```js
+// src/App.vue
+<script setup>
+import { onMounted } from 'vue'
+
+onMounted(async () => {
+  const { default: AllyWidget } = await import('ally-widget')
+  AllyWidget.init({ primaryColor: '#6366f1' })
+})
+</script>
 ```
+
+---
 
 ### Nuxt 3
 
 ```js
-// plugins/ally-widget.client.js  ← the .client suffix means browser-only
+// plugins/ally-widget.client.js
+// The .client suffix tells Nuxt this is browser-only — no SSR guard needed
 import AllyWidget from 'ally-widget'
 
 export default defineNuxtPlugin(() => {
-  AllyWidget.init({
-    position: 'bottom-right',
-    primaryColor: '#6366f1'
-  })
+  AllyWidget.init({ primaryColor: '#6366f1' })
 })
 ```
+
+---
+
+### SvelteKit
+
+```svelte
+<!-- src/routes/+layout.svelte -->
+<script>
+  import { onMount } from 'svelte'
+
+  onMount(async () => {
+    const { default: AllyWidget } = await import('ally-widget')
+    AllyWidget.init({ primaryColor: '#6366f1' })
+  })
+</script>
+
+<slot />
+```
+
+---
+
+### Astro
+
+```astro
+<!-- src/layouts/Layout.astro -->
+---
+// server-side — nothing here
+---
+<html lang="en">
+  <head>...</head>
+  <body>
+    <slot />
+
+    <script>
+      // This block runs in the browser only
+      import AllyWidget from 'ally-widget'
+      AllyWidget.init({ primaryColor: '#6366f1' })
+    </script>
+  </body>
+</html>
+```
+
+---
+
+### WordPress
+
+```php
+// functions.php (child theme or plugin)
+function enqueue_ally_widget() {
+    wp_enqueue_script(
+        'ally-widget',
+        'https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js',
+        [],
+        '1.0.0',
+        true   // load in footer
+    );
+
+    wp_add_inline_script(
+        'ally-widget',
+        "window.AllyWidgetOptions = {
+            position: 'bottom-right',
+            primaryColor: '#6366f1',
+            poweredByText: '" . get_bloginfo('name') . "'
+        };",
+        'before'
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_ally_widget');
+```
+
+---
 
 ### Laravel / Blade
 
@@ -461,21 +619,56 @@ export default defineNuxtPlugin(() => {
     poweredByText: '{{ config("app.name") }}'
   };
 </script>
-<script src="{{ asset('js/ally-widget.min.js') }}"></script>
+<script src="{{ asset('vendor/ally-widget/ally-widget.min.js') }}"></script>
+{{-- or CDN: src="https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js" --}}
 ```
+
+---
+
+### Angular
+
+```ts
+// src/app/app.component.ts
+import { Component, AfterViewInit } from '@angular/core'
+
+@Component({ selector: 'app-root', templateUrl: './app.component.html' })
+export class AppComponent implements AfterViewInit {
+  ngAfterViewInit() {
+    import('ally-widget').then(({ default: AllyWidget }) => {
+      AllyWidget.init({ primaryColor: '#6366f1' })
+    })
+  }
+}
+```
+
+---
+
+### PHP (plain)
+
+```php
+<!-- footer.php or before </body> -->
+<script>
+  window.AllyWidgetOptions = {
+    position: 'bottom-right',
+    primaryColor: '#6366f1'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"></script>
+```
+
+---
 
 ### `AllyWidget.init()` reference
 
 ```js
-// Returns the widget instance (or null when called server-side)
 const instance = AllyWidget.init(options)
+// Returns the widget instance, or null when called server-side.
+// Handles DOMContentLoaded automatically — safe to call at any time.
 ```
-
-Accepts the same options object as the constructor. Handles `DOMContentLoaded` automatically — safe to call before the document is ready.
 
 ### Disabling auto-init
 
-When importing via npm in a framework, the CDN auto-init still fires if the module loads in a browser context. Suppress it with `autoInit: false`:
+Suppress the automatic CDN init when you are calling `AllyWidget.init()` yourself:
 
 ```html
 <script>
@@ -483,7 +676,174 @@ When importing via npm in a framework, the CDN auto-init still fires if the modu
 </script>
 ```
 
-Or when the module is loaded purely programmatically (e.g. inside `useEffect`), auto-init is already skipped because the module executes after `DOMContentLoaded` has already fired and you're calling `AllyWidget.init()` yourself.
+---
+
+## Customization Guide
+
+### Minimal setup — just the essentials
+
+Hide features your site doesn't need to keep the panel focused:
+
+```js
+AllyWidget.init({
+  disableFeatures: [
+    'readable-text',       // remove Dyslexia Font
+    'hide-images',         // remove Hide Images
+    'annotations',         // hide dev tools in prod
+    'accessibility-report'
+  ]
+})
+```
+
+---
+
+### Custom colour theme
+
+Pass any CSS value. The entire panel re-derives from these tokens:
+
+```js
+AllyWidget.init({
+  // Red brand
+  primaryColor:       '#e11d48',
+  primaryColorLight:  '#fb7185',
+  primaryColorDark:   '#9f1239',
+
+  // Dark panel
+  backgroundColor:    '#0f172a',
+  textColor:          '#e2e8f0',
+  cardBackground:     '#1e293b',
+  borderColor:        '#334155',
+  hoverColor:         '#1e293b',
+  activeColor:        '#312e81',
+
+  // Shape
+  borderRadius:       '8px',      // panel corners
+  buttonBorderRadius: '12px',     // toggle button (50% = circle)
+  zIndex:             99999
+})
+```
+
+---
+
+### Custom branding
+
+Replace the footer link with your own:
+
+```js
+AllyWidget.init({
+  poweredByText: 'My Company',
+  poweredByUrl:  'https://mycompany.com'
+})
+```
+
+---
+
+### Rename or re-icon any button
+
+```js
+AllyWidget.init({
+  featureOverrides: {
+    'text-to-speech': { label: 'Read Page Aloud' },
+    'reading-aid':    { label: 'Focus Line' },
+    'bold-text':      {
+      label: 'Bold',
+      icon:  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">…</svg>'
+    }
+  }
+})
+```
+
+---
+
+### Custom toggle button icon
+
+```js
+AllyWidget.init({
+  // Built-in variants: 'default' | 'person' | 'eye' | 'universal'
+  icon: 'universal',
+
+  // Or pass any SVG string:
+  icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">…</svg>'
+})
+```
+
+---
+
+### Position and size
+
+```js
+AllyWidget.init({
+  position: 'bottom-left',   // bottom-right | bottom-left | top-right | top-left
+  offset:   [24, 32],        // [horizontal, vertical] px from edge
+  size:     '60px'           // toggle button size
+})
+```
+
+---
+
+### Event callbacks for analytics
+
+```js
+AllyWidget.init({
+  onOpen()  { analytics.track('ally_open') },
+  onClose() { analytics.track('ally_close') },
+
+  onFeatureToggle(key, enabled) {
+    analytics.track('ally_feature', { key, enabled })
+    // key examples: 'bold-text', 'contrast-toggle', 'text-to-speech'
+  },
+
+  onReset() { analytics.track('ally_reset') }
+})
+```
+
+---
+
+### Full example — everything configured
+
+```js
+window.AllyWidgetOptions = {
+  // Placement
+  position:         'bottom-right',
+  offset:           [20, 20],
+  size:             '56px',
+  keyboardShortcut: true,            // Alt+A
+
+  // Language
+  lang:             'ne',            // 'en' | 'ne'
+
+  // Storage
+  storageKey:       'myapp-ally',
+
+  // Branding
+  poweredByText:    'My Company',
+  poweredByUrl:     'https://mycompany.com',
+
+  // Theme
+  primaryColor:     '#6366f1',
+  borderRadius:     '12px',
+  buttonBorderRadius: '50%',
+  zIndex:           9999,
+
+  // Features
+  disableFeatures:  ['annotations', 'accessibility-report'],
+
+  featureOverrides: {
+    'text-to-speech': { label: 'Read Aloud' }
+  },
+
+  // TTS
+  ttsNativeVoiceLang: 'ne-NP',
+  ttsRate:            0.9,
+  ttsPitch:           1.0,
+
+  // Callbacks
+  onOpen()  { console.log('opened') },
+  onClose() { console.log('closed') },
+  onFeatureToggle(key, enabled) { console.log(key, enabled) },
+  onReset() { console.log('reset') }
+}
+```
 
 ---
 
