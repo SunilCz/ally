@@ -93,6 +93,7 @@ widget.startAccessibleWebWidget();
 | `lang` | `string` | browser lang | `'en'` or `'ne'` |
 | `storageKey` | `string` | `'ally-wgt'` | localStorage key — change to avoid collisions when multiple instances share a domain |
 | `keyboardShortcut` | `boolean` | `true` | `Alt+A` toggles the panel. Set `false` to disable |
+| `showViolationBubble` | `boolean` | `true` | Red badge on the toggle button showing the axe-core violation count. Set `false` to hide it |
 | `icon` | `string` | `'default'` | Built-in variant name or a raw SVG string for the toggle button icon |
 | `icons` | `object` | — | Override any icon in the full icon set (see [Icon Keys](#icon-keys)) |
 | `poweredByText` | `string` | `'Ally Widget'` | Footer link label |
@@ -853,6 +854,18 @@ Append `?ally-dev=true` to any URL to enable the Annotations and Accessibility R
 
 ```
 https://yoursite.com/page?ally-dev=true
+```
+
+The axe-core library is loaded on demand in dev mode only — zero weight in production.
+
+### Hiding the violation badge
+
+When violations are found, a red number badge appears on the toggle button. To hide it:
+
+```js
+AllyWidget.init({
+  showViolationBubble: false
+});
 ```
 
 ---
