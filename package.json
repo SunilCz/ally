@@ -6,7 +6,6 @@
   "main": "./dist/ally-widget.cjs.js",
   "module": "./dist/ally-widget.esm.js",
   "browser": "./dist/ally-widget.min.js",
-  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/ally-widget.esm.js",

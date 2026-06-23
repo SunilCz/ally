@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ally Widget — Developer Docs</title>
+</head>
+<body>
+<style>
+  /* ── Palette ─────────────────────────────────────────────────────────────── */
+  :root {
+    --ground:      #0c0c1e;
+    --surface:     #13132b;
+    --surface-2:   #1a1a38;
+    --border:      #2a2a52;
+    --text:        #ddd9f5;
+    --text-muted:  #8b87b8;
+    --accent:      #6366f1;
+    --accent-glow: rgba(99,102,241,.18);
+    --accent-2:    #a78bfa;
+    --amber:       #f59e0b;
+    --green:       #34d399;
+    --red:         #f87171;
+    --sidebar-w:   260px;
+    --font-code:   'Cascadia Code','JetBrains Mono','Fira Code','Courier New',monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ─────────────────────────────────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 0 40px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-logo .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+
+  .sidebar-logo .logo-mark svg { width: 20px; height: 20px; fill: #fff; }
+
+  .sidebar-logo h1 {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: var(--text);
+  }
+  .sidebar-logo .version {
+    font-size: 0.72rem;
+    color: var(--accent-2);
+    font-family: var(--font-code);
+    margin-top: 2px;
+  }
+
+  .nav-group { padding: 0 12px; margin-bottom: 4px; }
+
+  .nav-group-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 12px 4px;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.87rem;
+    transition: background .15s, color .15s;
+    cursor: pointer;
+  }
+
+  .nav-link:hover { background: var(--surface-2); color: var(--text); }
+  .nav-link.active { background: var(--accent-glow); color: var(--accent-2); font-weight: 600; }
+
+  /* ── Main ────────────────────────────────────────────────────────────────── */
+  .main {
+    flex: 1;
+    min-width: 0;
+    padding: 0 0 80px;
+  }
+
+  /* ── Hero ────────────────────────────────────────────────────────────────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    align-items: center;
+    padding: 64px 56px 56px;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(99,102,241,.08) 0%, transparent 70%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 39px,
+      rgba(99,102,241,.035) 40px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(99,102,241,.035) 40px
+    );
+    pointer-events: none;
+  }
+
+  .hero-copy { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 20px;
+  }
+
+  .hero-eyebrow span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(.7); }
+  }
+
+  .hero h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .hero h2 em {
+    font-style: normal;
+    color: var(--accent-2);
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 440px;
+    margin-bottom: 32px;
+    line-height: 1.65;
+  }
+
+  .hero-install {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .code-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--font-code);
+    font-size: 0.87rem;
+    color: var(--green);
+  }
+
+  .code-pill .prompt { color: var(--text-muted); }
+
+  .copy-btn {
+    background: none; border: none; cursor: pointer; padding: 0;
+    color: var(--text-muted); transition: color .15s;
+    display: flex; align-items: center;
+  }
+  .copy-btn:hover { color: var(--accent-2); }
+  .copy-btn svg { width: 14px; height: 14px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: border-color .15s, color .15s;
+  }
+  .badge:hover { border-color: var(--accent); color: var(--accent-2); }
+
+  /* ── Widget Mock ─────────────────────────────────────────────────────────── */
+  .widget-mock {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mock-panel {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow:
+      0 0 0 1px rgba(99,102,241,.3),
+      0 24px 60px rgba(0,0,0,.5),
+      0 0 80px var(--accent-glow);
+    overflow: hidden;
+    transform: perspective(1000px) rotateY(-6deg) rotateX(2deg);
+    transition: transform .4s ease;
+  }
+
+  .mock-panel:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+
+  .mock-header {
+    background: #6366f1;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mock-header-icon {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .mock-header-icon svg { width: 16px; height: 16px; fill: #fff; }
+
+  .mock-header-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .mock-body { padding: 14px 16px; }
+
+  .mock-section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 8px;
+    margin-top: 12px;
+  }
+
+  .mock-section-label:first-child { margin-top: 0; }
+
+  .mock-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .mock-btn {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 6px 6px;
+    text-align: center;
+    font-size: 0.67rem;
+    color: #374151;
+    font-weight: 500;
+    cursor: default;
+    transition: background .15s;
+  }
+
+  .mock-btn.active {
+    background: #ede9fe;
+    border-color: #6366f1;
+    color: #4f46e5;
+    font-weight: 700;
+  }
+
+  .mock-btn-icon { font-size: 1rem; display: block; margin-bottom: 3px; }
+
+  .mock-footer {
+    border-top: 1px solid #e5e7eb;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mock-reset {
+    font-size: 0.72rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mock-brand {
+    font-size: 0.7rem;
+    color: #6366f1;
+    font-weight: 600;
+  }
+
+  .mock-fab {
+    position: absolute;
+    bottom: -16px;
+    right: -16px;
+    width: 52px; height: 52px;
+    background: #6366f1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 24px rgba(99,102,241,.5);
+    animation: fab-float 3s ease-in-out infinite;
+  }
+
+  .mock-fab svg { width: 26px; height: 26px; fill: #fff; }
+
+  @keyframes fab-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ── Content ─────────────────────────────────────────────────────────────── */
+  .content { padding: 0 56px; }
+
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .section h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+
+  .section p {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    max-width: 660px;
+  }
+
+  /* ── Tabs ─────────────────────────────────────────────────────────────────── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+
+  .tab-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Code blocks ─────────────────────────────────────────────────────────── */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 20px;
+    position: relative;
+  }
+
+  .code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+
+  .code-lang {
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    color: var(--amber);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .code-copy {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.75rem; color: var(--text-muted);
+    font-family: inherit;
+    display: flex; align-items: center; gap: 5px;
+    padding: 0; transition: color .15s;
+  }
+  .code-copy:hover { color: var(--accent-2); }
+  .code-copy svg { width: 13px; height: 13px; }
+
+  pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: var(--font-code);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .kw  { color: #c792ea; }
+  .str { color: #c3e88d; }
+  .fn  { color: #82aaff; }
+  .cm  { color: #546e7a; font-style: italic; }
+  .num { color: #f78c6c; }
+  .prop{ color: #ffcb6b; }
+  .punc{ color: var(--text-muted); }
+
+  /* ── Tables ──────────────────────────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+
+  thead tr {
+    border-bottom: 2px solid var(--border);
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    vertical-align: top;
+    color: var(--text-muted);
+  }
+
+  td:first-child, td:nth-child(2) {
+    font-family: var(--font-code);
+    font-size: 0.82rem;
+    color: var(--accent-2);
+  }
+
+  tr:hover td { background: var(--surface-2); }
+
+  /* ── Feature grid ────────────────────────────────────────────────────────── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 16px 0 24px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color .15s, background .15s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--accent);
+    background: var(--surface-2);
+  }
+
+  .feature-card-key {
+    font-family: var(--font-code);
+    font-size: 0.78rem;
+    color: var(--accent-2);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .feature-card-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .feature-card-tag {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--accent-glow);
+    color: var(--accent-2);
+  }
+
+  /* ── Theme swatches ──────────────────────────────────────────────────────── */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 16px 0 24px;
+  }
+
+  .swatch {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .swatch-color {
+    height: 44px;
+  }
+
+  .swatch-info {
+    padding: 8px 12px;
+    background: var(--surface);
+  }
+
+  .swatch-token {
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    color: var(--accent-2);
+    margin-bottom: 2px;
+  }
+
+  .swatch-hex {
+    font-family: var(--font-code);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Callouts ────────────────────────────────────────────────────────────── */
+  .callout {
+    display: flex;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border-left: 3px solid;
+    margin: 16px 0 24px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .callout.info { background: rgba(99,102,241,.08); border-color: var(--accent); }
+  .callout.tip  { background: rgba(52,211,153,.08); border-color: var(--green); }
+  .callout.warn { background: rgba(245,158,11,.08); border-color: var(--amber); }
+
+  .callout-icon { font-size: 1rem; flex-shrink: 0; line-height: 1.6; }
+
+  /* ── Inline code ─────────────────────────────────────────────────────────── */
+  code {
+    font-family: var(--font-code);
+    font-size: 0.85em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--accent-2);
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .widget-mock { display: none; }
+    .content { padding: 0 24px; }
+    .hero { padding: 40px 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mock-fab, .hero-eyebrow span { animation: none; }
+    .mock-panel { transform: none; }
+  }
+
+  /* ── Scrollbar ───────────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+
+<!-- Sidebar -->
+<nav class="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <h1>Ally Widget</h1>
+    <div class="version">v1.0.0 · Docs</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Getting Started</div>
+    <a class="nav-link active" href="#install">Installation</a>
+    <a class="nav-link" href="#quickstart">Quick Start</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Configuration</div>
+    <a class="nav-link" href="#all-options">All Options</a>
+    <a class="nav-link" href="#theme">Theme Tokens</a>
+    <a class="nav-link" href="#features">Feature Keys</a>
+    <a class="nav-link" href="#overrides">Label &amp; Icon Overrides</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Features</div>
+    <a class="nav-link" href="#language">Language</a>
+    <a class="nav-link" href="#tts">Text to Speech</a>
+    <a class="nav-link" href="#callbacks">Callbacks</a>
+    <a class="nav-link" href="#data-attrs">Data Attributes</a>
+    <a class="nav-link" href="#devmode">Dev Mode</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Frameworks</div>
+    <a class="nav-link" href="#plain-html">Plain HTML</a>
+    <a class="nav-link" href="#react">React / Vite</a>
+    <a class="nav-link" href="#nextjs">Next.js</a>
+    <a class="nav-link" href="#vue">Vue 3</a>
+    <a class="nav-link" href="#nuxt">Nuxt 3</a>
+    <a class="nav-link" href="#svelte">SvelteKit</a>
+    <a class="nav-link" href="#astro">Astro</a>
+    <a class="nav-link" href="#wordpress">WordPress</a>
+    <a class="nav-link" href="#laravel">Laravel</a>
+    <a class="nav-link" href="#angular">Angular</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Customization</div>
+    <a class="nav-link" href="#custom-theme">Theme</a>
+    <a class="nav-link" href="#custom-features">Features</a>
+    <a class="nav-link" href="#custom-branding">Branding</a>
+    <a class="nav-link" href="#custom-callbacks">Callbacks</a>
+    <a class="nav-link" href="#full-example">Full Example</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Publishing</div>
+    <a class="nav-link" href="#publishing">npm Publish</a>
+  </div>
+</nav>
+
+<!-- Main -->
+<main class="main" id="main">
+
+  <!-- Hero -->
+  <section class="hero" id="install">
+    <div class="hero-copy">
+      <div class="hero-eyebrow"><span></span>Accessibility widget for every site</div>
+      <h2>Make your site<br><em>accessible by default</em></h2>
+      <p class="hero-desc">
+        One script tag. A full accessibility panel — font size, contrast, TTS, reading guide, and more. Fully customisable. No dependencies. English &amp; Nepali built-in.
+      </p>
+      <div class="hero-install">
+        <div class="code-pill">
+          <span class="prompt">$</span>
+          <span>npm install ally-widget</span>
+          <button class="copy-btn" onclick="copyText('npm install ally-widget', this)" aria-label="Copy install command">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widget Mock -->
+    <div class="widget-mock" aria-hidden="true">
+      <div class="mock-panel">
+        <div class="mock-header">
+          <div class="mock-header-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          </div>
+          <div class="mock-header-title">Accessibility</div>
+        </div>
+        <div class="mock-body">
+          <div class="mock-section-label">Text</div>
+          <div class="mock-btns">
+            <div class="mock-btn active"><span class="mock-btn-icon">𝐁</span>Bold Text</div>
+            <div class="mock-btn"><span class="mock-btn-icon">↕</span>Line Height</div>
+            <div class="mock-btn"><span class="mock-btn-icon">Aa</span>Font Size</div>
+            <div class="mock-btn"><span class="mock-btn-icon">Aa</span>Dyslexia</div>
+          </div>
+          <div class="mock-section-label">Color &amp; Contrast</div>
+          <div class="mock-btns">
+            <div class="mock-btn"><span class="mock-btn-icon">◑</span>Contrast</div>
+            <div class="mock-btn active"><span class="mock-btn-icon">⬛</span>Invert</div>
+          </div>
+          <div class="mock-section-label">Speech</div>
+          <div class="mock-btns" style="grid-template-columns:1fr">
+            <div class="mock-btn"><span class="mock-btn-icon">🔊</span>Text to Speech</div>
+          </div>
+        </div>
+        <div class="mock-footer">
+          <div class="mock-reset">↺ Reset</div>
+          <div class="mock-brand">Ally Widget</div>
+        </div>
+      </div>
+      <div class="mock-fab">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="content">
+
+    <!-- Quick Start -->
+    <section class="section" id="quickstart">
+      <div class="section-eyebrow">Getting Started</div>
+      <h2>Quick Start</h2>
+      <p>Three ways to use Ally Widget — pick whichever fits your stack.</p>
+
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" role="tab" onclick="switchTab('qs','script',this)">Script Tag</button>
+        <button class="tab-btn" role="tab" onclick="switchTab('qs','esm',this)">ESM / npm</button>
+        <button class="tab-btn" role="tab" onclick="switchTab('qs','cdn',this)">CDN</button>
+      </div>
+
+      <div class="tab-panel active" id="qs-script">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">HTML</span>
+            <button class="code-copy" onclick="copyCode(this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+          <pre><span class="cm">&lt;!-- Configure before the script --&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+  <span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">=</span> <span class="punc">{</span>
+    <span class="prop">position</span><span class="punc">:</span>      <span class="str">'bottom-right'</span><span class="punc">,</span>
+    <span class="prop">lang</span><span class="punc">:</span>          <span class="str">'en'</span><span class="punc">,</span>
+    <span class="prop">primaryColor</span><span class="punc">:</span>  <span class="str">'#6366f1'</span><span class="punc">,</span>
+    <span class="prop">poweredByText</span><span class="punc">:</span> <span class="str">'My Company'</span>
+  <span class="punc">};</span>
+<span class="kw">&lt;/script&gt;</span>
+<span class="kw">&lt;script </span><span class="prop">src</span><span class="punc">=</span><span class="str">"dist/ally-widget.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+        </div>
+        <div class="callout tip">
+          <span class="callout-icon">⌨️</span>
+          <span>Press <strong>Alt + A</strong> anywhere on the page to toggle the widget. Set <code>keyboardShortcut: false</code> to disable.</span>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="qs-esm">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">JavaScript</span>
+            <button class="code-copy" onclick="copyCode(this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+          <pre><span class="kw">import</span> AllyWidget <span class="kw">from</span> <span class="str">'ally-widget'</span><span class="punc">;</span>
+
+<span class="kw">const</span> widget <span class="punc">=</span> <span class="kw">new</span> <span class="fn">AllyWidget</span><span class="punc">({</span>
+  <span class="prop">position</span><span class="punc">:</span>      <span class="str">'bottom-right'</span><span class="punc">,</span>
+  <span class="prop">primaryColor</span><span class="punc">:</span>  <span class="str">'#6366f1'</span><span class="punc">,</span>
+  <span class="prop">poweredByText</span><span class="punc">:</span> <span class="str">'My Company'</span><span class="punc">,</span>
+  <span class="prop">onFeatureToggle</span><span class="punc">(</span>key<span class="punc">,</span> enabled<span class="punc">)</span> <span class="punc">{</span>
+    analytics<span class="punc">.</span><span class="fn">track</span><span class="punc">(</span><span class="str">'a11y'</span><span class="punc">,</span> <span class="punc">{</span> key<span class="punc">,</span> enabled <span class="punc">});</span>
+  <span class="punc">}</span>
+<span class="punc">});</span>
+
+widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span><span class="punc">();</span></pre>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="qs-cdn">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-lang">HTML</span>
+            <button class="code-copy" onclick="copyCode(this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+          <pre><span class="kw">&lt;script </span><span class="prop">src</span><span class="punc">=</span><span class="str">"https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+        </div>
+        <div class="callout info">
+          <span class="callout-icon">💡</span>
+          <span>The CDN build auto-initialises. Configure via <code>window.AllyWidgetOptions</code> before the script tag, or via <code>data-ally-*</code> attributes on the script element.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Options -->
+    <section class="section" id="all-options">
+      <div class="section-eyebrow">Configuration</div>
+      <h2>All Options</h2>
+      <p>Pass any of these to <code>window.AllyWidgetOptions</code> or the constructor.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>position</td><td>string</td><td>'bottom-right'</td><td>bottom-right · bottom-left · top-right · top-left</td></tr>
+            <tr><td>offset</td><td>[number,number]</td><td>[20, 20]</td><td>[horizontal, vertical] px from edge</td></tr>
+            <tr><td>size</td><td>string</td><td>'52px'</td><td>Toggle button size — px, em, rem, or %</td></tr>
+            <tr><td>lang</td><td>string</td><td>browser lang</td><td>'en' or 'ne'</td></tr>
+            <tr><td>storageKey</td><td>string</td><td>'ally-wgt'</td><td>localStorage key. Change when multiple widgets share a domain</td></tr>
+            <tr><td>keyboardShortcut</td><td>boolean</td><td>true</td><td>Alt+A toggles the panel. false to disable</td></tr>
+            <tr><td>icon</td><td>string</td><td>'default'</td><td>Built-in variant name or raw SVG string for the toggle button</td></tr>
+            <tr><td>icons</td><td>object</td><td>—</td><td>Override any icon in the full icon set</td></tr>
+            <tr><td>poweredByText</td><td>string</td><td>'Ally Widget'</td><td>Footer link label</td></tr>
+            <tr><td>poweredByUrl</td><td>string</td><td>repo URL</td><td>Footer link href</td></tr>
+            <tr><td>disableFeatures</td><td>string[]</td><td>[]</td><td>Feature keys to hide from the panel</td></tr>
+            <tr><td>featureOverrides</td><td>object</td><td>{}</td><td>Override label or icon per feature key</td></tr>
+            <tr><td>theme</td><td>object</td><td>—</td><td>All theme tokens grouped under one key</td></tr>
+            <tr><td>ttsNativeVoiceName</td><td>string</td><td>—</td><td>Exact browser voice name to prefer</td></tr>
+            <tr><td>ttsNativeVoiceLang</td><td>string</td><td>—</td><td>BCP-47 tag for TTS voice (e.g. 'ne-NP')</td></tr>
+            <tr><td>ttsRate</td><td>number</td><td>1</td><td>Speech rate 0.5–2</td></tr>
+            <tr><td>ttsPitch</td><td>number</td><td>1</td><td>Speech pitch 0–2</td></tr>
+            <tr><td>onOpen</td><td>function</td><td>—</td><td>Called when the panel opens</td></tr>
+            <tr><td>onClose</td><td>function</td><td>—</td><td>Called when the panel closes</td></tr>
+            <tr><td>onFeatureToggle</td><td>function(key,enabled)</td><td>—</td><td>Called on every feature toggle</td></tr>
+            <tr><td>onReset</td><td>function</td><td>—</td><td>Called when user resets all settings</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Theme -->
+    <section class="section" id="theme">
+      <div class="section-eyebrow">Configuration</div>
+      <h2>Theme Tokens</h2>
+      <p>Every visual property of the panel is a CSS custom property derived from these tokens. Change one value — the entire panel updates.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="prop">primaryColor</span><span class="punc">:</span>       <span class="str">'#e11d48'</span><span class="punc">,</span>  <span class="cm">// main brand colour</span>
+  <span class="prop">primaryColorLight</span><span class="punc">:</span>  <span class="str">'#fb7185'</span><span class="punc">,</span>
+  <span class="prop">primaryColorDark</span><span class="punc">:</span>   <span class="str">'#9f1239'</span><span class="punc">,</span>
+  <span class="prop">backgroundColor</span><span class="punc">:</span>    <span class="str">'#0f172a'</span><span class="punc">,</span>  <span class="cm">// panel background</span>
+  <span class="prop">textColor</span><span class="punc">:</span>          <span class="str">'#e2e8f0'</span><span class="punc">,</span>
+  <span class="prop">cardBackground</span><span class="punc">:</span>     <span class="str">'#1e293b'</span><span class="punc">,</span>
+  <span class="prop">borderColor</span><span class="punc">:</span>        <span class="str">'#334155'</span><span class="punc">,</span>
+  <span class="prop">borderRadius</span><span class="punc">:</span>       <span class="str">'8px'</span><span class="punc">,</span>     <span class="cm">// panel corners</span>
+  <span class="prop">buttonBorderRadius</span><span class="punc">:</span> <span class="str">'12px'</span><span class="punc">,</span>    <span class="cm">// toggle button — 50% = circle</span>
+  <span class="prop">zIndex</span><span class="punc">:</span>             <span class="num">99999</span>
+<span class="punc">};</span></pre>
+      </div>
+
+      <div class="swatch-grid">
+        <div class="swatch"><div class="swatch-color" style="background:#4f46e5"></div><div class="swatch-info"><div class="swatch-token">primaryColor</div><div class="swatch-hex">#4f46e5</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#818cf8"></div><div class="swatch-info"><div class="swatch-token">primaryColorLight</div><div class="swatch-hex">#818cf8</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#3730a3"></div><div class="swatch-info"><div class="swatch-token">primaryColorDark</div><div class="swatch-hex">#3730a3</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#ffffff; border:1px solid #e5e7eb"></div><div class="swatch-info"><div class="swatch-token">backgroundColor</div><div class="swatch-hex">#ffffff</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#1f2937"></div><div class="swatch-info"><div class="swatch-token">textColor</div><div class="swatch-hex">#1f2937</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#f9fafb; border:1px solid #e5e7eb"></div><div class="swatch-info"><div class="swatch-token">cardBackground</div><div class="swatch-hex">#f9fafb</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#ede9fe"></div><div class="swatch-info"><div class="swatch-token">activeColor</div><div class="swatch-hex">#ede9fe</div></div></div>
+        <div class="swatch"><div class="swatch-color" style="background:#e5e7eb"></div><div class="swatch-info"><div class="swatch-token">borderColor</div><div class="swatch-hex">#e5e7eb</div></div></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+      <div class="section-eyebrow">Configuration</div>
+      <h2>Feature Keys</h2>
+      <p>Use these keys with <code>disableFeatures</code> and <code>featureOverrides</code>.</p>
+
+      <h3>Text</h3>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-key">text-scale</div><div class="feature-card-label">Font Size slider</div></div>
+        <div class="feature-card"><div class="feature-card-key">bold-text</div><div class="feature-card-label">Font Weight</div></div>
+        <div class="feature-card"><div class="feature-card-key">line-spacing</div><div class="feature-card-label">Line Height</div></div>
+        <div class="feature-card"><div class="feature-card-key">letter-spacing</div><div class="feature-card-label">Letter Spacing</div></div>
+        <div class="feature-card"><div class="feature-card-key">readable-text</div><div class="feature-card-label">Dyslexia Font</div></div>
+      </div>
+
+      <h3>Color &amp; Contrast</h3>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-key">contrast-toggle</div><div class="feature-card-label">Contrast (cycles)</div></div>
+        <div class="feature-card"><div class="feature-card-key">saturation-toggle</div><div class="feature-card-label">Saturation (cycles)</div></div>
+        <div class="feature-card"><div class="feature-card-key">invert-colors</div><div class="feature-card-label">Invert Colors</div></div>
+        <div class="feature-card"><div class="feature-card-key">high-contrast-mode</div><div class="feature-card-label">High Contrast</div></div>
+      </div>
+
+      <h3>Reading Aids</h3>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-key">highlight-links</div><div class="feature-card-label">Highlight Links</div></div>
+        <div class="feature-card"><div class="feature-card-key">highlight-title</div><div class="feature-card-label">Highlight Titles</div></div>
+        <div class="feature-card"><div class="feature-card-key">reading-aid</div><div class="feature-card-label">Reading Guide</div></div>
+        <div class="feature-card"><div class="feature-card-key">simple-layout</div><div class="feature-card-label">Simplify Layout</div></div>
+      </div>
+
+      <h3>Interaction</h3>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-key">large-pointer</div><div class="feature-card-label">Big Cursor</div></div>
+        <div class="feature-card"><div class="feature-card-key">pause-motion</div><div class="feature-card-label">Stop Animations</div></div>
+        <div class="feature-card"><div class="feature-card-key">hide-images</div><div class="feature-card-label">Hide Images</div></div>
+        <div class="feature-card"><div class="feature-card-key">text-to-speech</div><div class="feature-card-label">Text to Speech</div></div>
+      </div>
+
+      <h3>Dev mode only <small style="color:var(--text-muted);font-weight:400">(?ally-dev=true)</small></h3>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-key">annotations</div><div class="feature-card-label">axe-core overlays</div><div class="feature-card-tag">dev</div></div>
+        <div class="feature-card"><div class="feature-card-key">accessibility-report</div><div class="feature-card-label">Full a11y report</div><div class="feature-card-tag">dev</div></div>
+      </div>
+
+      <h3>Disabling features</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="prop">disableFeatures</span><span class="punc">:</span> <span class="punc">[</span>
+    <span class="str">'hide-images'</span><span class="punc">,</span>
+    <span class="str">'readable-text'</span><span class="punc">,</span>
+    <span class="str">'annotations'</span>
+  <span class="punc">]</span>
+<span class="punc">};</span></pre>
+      </div>
+    </section>
+
+    <!-- Overrides -->
+    <section class="section" id="overrides">
+      <div class="section-eyebrow">Configuration</div>
+      <h2>Label &amp; Icon Overrides</h2>
+      <p>Rename any button or swap its icon — per feature, without touching the source.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="prop">featureOverrides</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="str">'bold-text'</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">label</span><span class="punc">:</span> <span class="str">'Bold'</span> <span class="punc">},</span>
+    <span class="str">'text-to-speech'</span><span class="punc">:</span> <span class="punc">{</span>
+      <span class="prop">label</span><span class="punc">:</span> <span class="str">'Read Aloud'</span><span class="punc">,</span>
+      <span class="prop">icon</span><span class="punc">:</span>  <span class="str">'&lt;svg xmlns="…"&gt;…&lt;/svg&gt;'</span>
+    <span class="punc">}</span>
+  <span class="punc">},</span>
+  <span class="cm">// swap the toggle button icon globally</span>
+  <span class="prop">icons</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="prop">accessibility</span><span class="punc">:</span> <span class="str">'&lt;svg&gt;…&lt;/svg&gt;'</span>
+  <span class="punc">}</span>
+<span class="punc">};</span></pre>
+      </div>
+    </section>
+
+    <!-- Language -->
+    <section class="section" id="language">
+      <div class="section-eyebrow">Features</div>
+      <h2>Language</h2>
+      <p>The widget ships with two languages. Users can switch at runtime using the language picker in the panel footer — their choice is saved to localStorage.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Language</th><th>Native name</th></tr></thead>
+          <tbody>
+            <tr><td>en</td><td>English</td><td>English</td></tr>
+            <tr><td>ne</td><td>Nepali</td><td>नेपाली</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span> <span class="prop">lang</span><span class="punc">:</span> <span class="str">'ne'</span> <span class="punc">};</span></pre>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">🌐</span>
+        <span>If <code>lang</code> is not set, the widget detects the browser's preferred language and falls back to English if unsupported.</span>
+      </div>
+    </section>
+
+    <!-- TTS -->
+    <section class="section" id="tts">
+      <div class="section-eyebrow">Features</div>
+      <h2>Text to Speech</h2>
+      <p>Uses the browser's native Web Speech API — no API key, no external service. When enabled, click any text element on the page to hear it read aloud.</p>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <span>Nepali TTS requires Chrome or Edge with the <strong>ne-NP</strong> voice installed. Firefox and Safari have limited Nepali support.</span>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="prop">lang</span><span class="punc">:</span>               <span class="str">'ne'</span><span class="punc">,</span>
+  <span class="prop">ttsNativeVoiceLang</span><span class="punc">:</span> <span class="str">'ne-NP'</span><span class="punc">,</span>          <span class="cm">// BCP-47 voice tag</span>
+  <span class="prop">ttsNativeVoiceName</span><span class="punc">:</span> <span class="str">'Google नेपाली'</span><span class="punc">,</span>  <span class="cm">// optional exact name</span>
+  <span class="prop">ttsRate</span><span class="punc">:</span>            <span class="num">0.9</span><span class="punc">,</span>              <span class="cm">// 0.5–2</span>
+  <span class="prop">ttsPitch</span><span class="punc">:</span>           <span class="num">1.0</span>               <span class="cm">// 0–2</span>
+<span class="punc">};</span></pre>
+      </div>
+
+      <p>If the requested voice is unavailable the widget falls back to the browser's default voice automatically.</p>
+    </section>
+
+    <!-- Callbacks -->
+    <section class="section" id="callbacks">
+      <div class="section-eyebrow">Features</div>
+      <h2>Event Callbacks</h2>
+      <p>Hook into widget lifecycle events for analytics, state sync, or custom behaviour.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="fn">onOpen</span><span class="punc">() {</span>
+    console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">'Panel opened'</span><span class="punc">);</span>
+  <span class="punc">},</span>
+
+  <span class="fn">onClose</span><span class="punc">() {</span>
+    console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">'Panel closed'</span><span class="punc">);</span>
+  <span class="punc">},</span>
+
+  <span class="fn">onFeatureToggle</span><span class="punc">(</span>key<span class="punc">,</span> enabled<span class="punc">) {</span>
+    <span class="cm">// key     — e.g. 'bold-text'</span>
+    <span class="cm">// enabled — true | false</span>
+    analytics<span class="punc">.</span><span class="fn">track</span><span class="punc">(</span><span class="str">'a11y_feature'</span><span class="punc">, {</span> key<span class="punc">,</span> enabled <span class="punc">});</span>
+  <span class="punc">},</span>
+
+  <span class="fn">onReset</span><span class="punc">() {</span>
+    console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">'Settings cleared'</span><span class="punc">);</span>
+  <span class="punc">}</span>
+<span class="punc">};</span></pre>
+      </div>
+    </section>
+
+    <!-- Data Attributes -->
+    <section class="section" id="data-attrs">
+      <div class="section-eyebrow">Features</div>
+      <h2>Data Attributes</h2>
+      <p>Configure the widget directly on the script tag — no JS required.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">HTML</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="kw">&lt;script</span>
+  <span class="prop">src</span><span class="punc">=</span><span class="str">"dist/ally-widget.min.js"</span>
+  <span class="prop">data-ally-lang</span><span class="punc">=</span><span class="str">"ne"</span>
+  <span class="prop">data-ally-position</span><span class="punc">=</span><span class="str">"bottom-left"</span>
+  <span class="prop">data-ally-size</span><span class="punc">=</span><span class="str">"60px"</span>
+  <span class="prop">data-ally-offset</span><span class="punc">=</span><span class="str">"24,24"</span>
+<span class="kw">&gt;&lt;/script&gt;</span></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attribute</th><th>Equivalent option</th></tr></thead>
+          <tbody>
+            <tr><td>data-ally-lang</td><td>lang</td></tr>
+            <tr><td>data-ally-position</td><td>position</td></tr>
+            <tr><td>data-ally-size</td><td>size</td></tr>
+            <tr><td>data-ally-offset</td><td>offset (comma-separated)</td></tr>
+            <tr><td>data-ally-icon</td><td>icon</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Dev Mode -->
+    <section class="section" id="devmode">
+      <div class="section-eyebrow">Features</div>
+      <h2>Dev Mode</h2>
+      <p>Append <code>?ally-dev=true</code> to any URL to unlock the Annotations and Accessibility Report tools. These run an axe-core scan in the background and surface issues — hidden in production, available during development.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">URL</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre>https<span class="punc">://</span>yoursite<span class="punc">.</span>com<span class="punc">/</span>page<span class="punc">?</span>ally-dev<span class="punc">=</span><span class="str">true</span></pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">✅</span>
+        <span>The axe-core library is loaded on demand only in dev mode. It adds zero weight to your production bundle.</span>
+      </div>
+    </section>
+
+    <!-- Publishing -->
+    <!-- ── Framework Integration ─────────────────────────────────────────── -->
+    <section class="section" id="plain-html">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Framework Integration</h2>
+      <p>The widget is browser-only. <code>AllyWidget.init()</code> is safe to call in any environment — it returns <code>null</code> on the server.</p>
+
+      <div class="table-wrap" style="margin-bottom:32px">
+        <table>
+          <thead><tr><th>Stack</th><th>Approach</th></tr></thead>
+          <tbody>
+            <tr><td>Plain HTML / PHP</td><td>Script tag — just works</td></tr>
+            <tr><td>React / Vite</td><td><code>useEffect</code> + dynamic import</td></tr>
+            <tr><td>Next.js App Router</td><td><code>'use client'</code> + <code>useEffect</code></td></tr>
+            <tr><td>Next.js Pages Router</td><td><code>useEffect</code> in <code>_app.jsx</code></td></tr>
+            <tr><td>Vue 3</td><td><code>onMounted</code> in App.vue</td></tr>
+            <tr><td>Nuxt 3</td><td><code>.client.js</code> plugin</td></tr>
+            <tr><td>SvelteKit</td><td><code>onMount</code> in <code>+layout.svelte</code></td></tr>
+            <tr><td>Astro</td><td><code>&lt;script&gt;</code> in Layout</td></tr>
+            <tr><td>WordPress</td><td><code>wp_enqueue_script</code></td></tr>
+            <tr><td>Laravel / Blade</td><td>Script tag in layout</td></tr>
+            <tr><td>Angular</td><td><code>ngAfterViewInit</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Plain HTML</h3>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">HTML</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="kw">&lt;script&gt;</span>
+  <span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">};</span>
+<span class="kw">&lt;/script&gt;</span>
+<span class="kw">&lt;script </span><span class="prop">src</span><span class="punc">=</span><span class="str">"https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="react">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>React / Vite</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JSX</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">// src/components/AllyWidget.jsx</span>
+<span class="kw">import</span> <span class="punc">{</span> useEffect <span class="punc">}</span> <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">export default function</span> <span class="fn">AllyWidget</span><span class="punc">() {</span>
+  <span class="fn">useEffect</span><span class="punc">(() => {</span>
+    <span class="kw">import</span><span class="punc">(</span><span class="str">'ally-widget'</span><span class="punc">).</span><span class="fn">then</span><span class="punc">(({</span> <span class="kw">default</span><span class="punc">:</span> AllyWidget <span class="punc">}) => {</span>
+      AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+    <span class="punc">})</span>
+  <span class="punc">}, [])</span>
+
+  <span class="kw">return null</span>
+<span class="punc">}</span>
+
+<span class="cm">// src/App.jsx — add once at the root</span>
+<span class="kw">import</span> AllyWidget <span class="kw">from</span> <span class="str">'./components/AllyWidget'</span>
+
+<span class="kw">export default function</span> <span class="fn">App</span><span class="punc">() {</span>
+  <span class="kw">return</span> <span class="punc">&lt;&gt;</span>
+    <span class="punc">&lt;</span>YourApp <span class="punc">/&gt;</span>
+    <span class="punc">&lt;</span>AllyWidget <span class="punc">/&gt;</span>
+  <span class="punc">&lt;/&gt;</span>
+<span class="punc">}</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="nextjs">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Next.js</h2>
+
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" onclick="switchTab('njs','app',this)">App Router</button>
+        <button class="tab-btn" onclick="switchTab('njs','pages',this)">Pages Router</button>
+        <button class="tab-btn" onclick="switchTab('njs','cdn',this)">CDN (next/script)</button>
+      </div>
+
+      <div class="tab-panel active" id="njs-app">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">JSX</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+          <pre><span class="cm">// components/AllyWidget.jsx</span>
+<span class="str">'use client'</span>
+<span class="kw">import</span> <span class="punc">{</span> useEffect <span class="punc">}</span> <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">export default function</span> <span class="fn">AllyWidget</span><span class="punc">() {</span>
+  <span class="fn">useEffect</span><span class="punc">(() => {</span>
+    <span class="kw">import</span><span class="punc">(</span><span class="str">'ally-widget'</span><span class="punc">).</span><span class="fn">then</span><span class="punc">(({</span> <span class="kw">default</span><span class="punc">:</span> AllyWidget <span class="punc">}) => {</span>
+      AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+    <span class="punc">})</span>
+  <span class="punc">}, [])</span>
+  <span class="kw">return null</span>
+<span class="punc">}</span>
+
+<span class="cm">// app/layout.jsx</span>
+<span class="kw">import</span> AllyWidget <span class="kw">from</span> <span class="str">'@/components/AllyWidget'</span>
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span><span class="punc">({</span> children <span class="punc">}) {</span>
+  <span class="kw">return</span> <span class="punc">(</span>
+    <span class="punc">&lt;</span>html lang<span class="punc">=</span><span class="str">"en"</span><span class="punc">&gt;&lt;</span>body<span class="punc">&gt;</span>
+      <span class="punc">{</span>children<span class="punc">}</span>
+      <span class="punc">&lt;</span>AllyWidget <span class="punc">/&gt;</span>
+    <span class="punc">&lt;/</span>body<span class="punc">&gt;&lt;/</span>html<span class="punc">&gt;</span>
+  <span class="punc">)</span>
+<span class="punc">}</span></pre>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="njs-pages">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">JSX</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+          <pre><span class="cm">// pages/_app.jsx</span>
+<span class="kw">import</span> <span class="punc">{</span> useEffect <span class="punc">}</span> <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">export default function</span> <span class="fn">App</span><span class="punc">({</span> Component<span class="punc">,</span> pageProps <span class="punc">}) {</span>
+  <span class="fn">useEffect</span><span class="punc">(() => {</span>
+    <span class="kw">import</span><span class="punc">(</span><span class="str">'ally-widget'</span><span class="punc">).</span><span class="fn">then</span><span class="punc">(({</span> <span class="kw">default</span><span class="punc">:</span> AllyWidget <span class="punc">}) => {</span>
+      AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+    <span class="punc">})</span>
+  <span class="punc">}, [])</span>
+  <span class="kw">return</span> <span class="punc">&lt;</span>Component <span class="punc">{...</span>pageProps<span class="punc">} /&gt;</span>
+<span class="punc">}</span></pre>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="njs-cdn">
+        <div class="code-block">
+          <div class="code-block-header"><span class="code-lang">JSX</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+          <pre><span class="kw">import</span> Script <span class="kw">from</span> <span class="str">'next/script'</span>
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span><span class="punc">({</span> children <span class="punc">}) {</span>
+  <span class="kw">return</span> <span class="punc">(</span>
+    <span class="punc">&lt;</span>html<span class="punc">&gt;&lt;</span>body<span class="punc">&gt;</span>
+      <span class="punc">{</span>children<span class="punc">}</span>
+      <span class="punc">&lt;</span>Script <span class="prop">id</span><span class="punc">=</span><span class="str">"ally-cfg"</span> <span class="prop">strategy</span><span class="punc">=</span><span class="str">"beforeInteractive"</span><span class="punc">&gt;{`</span>
+        <span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">};</span>
+      <span class="punc">`}&lt;/</span>Script<span class="punc">&gt;</span>
+      <span class="punc">&lt;</span>Script
+        <span class="prop">src</span><span class="punc">=</span><span class="str">"https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"</span>
+        <span class="prop">strategy</span><span class="punc">=</span><span class="str">"afterInteractive"</span>
+      <span class="punc">/&gt;</span>
+    <span class="punc">&lt;/</span>body<span class="punc">&gt;&lt;/</span>html<span class="punc">&gt;</span>
+  <span class="punc">)</span>
+<span class="punc">}</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="vue">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Vue 3</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">Vue</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">&lt;!-- src/App.vue --&gt;</span>
+<span class="kw">&lt;script setup&gt;</span>
+<span class="kw">import</span> <span class="punc">{</span> onMounted <span class="punc">}</span> <span class="kw">from</span> <span class="str">'vue'</span>
+
+<span class="fn">onMounted</span><span class="punc">(async () => {</span>
+  <span class="kw">const</span> <span class="punc">{</span> <span class="kw">default</span><span class="punc">:</span> AllyWidget <span class="punc">}</span> <span class="punc">=</span> <span class="kw">await</span> <span class="kw">import</span><span class="punc">(</span><span class="str">'ally-widget'</span><span class="punc">)</span>
+  AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+<span class="punc">})</span>
+<span class="kw">&lt;/script&gt;</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="nuxt">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Nuxt 3</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">// plugins/ally-widget.client.js</span>
+<span class="cm">// .client suffix = browser-only, no SSR guard needed</span>
+<span class="kw">import</span> AllyWidget <span class="kw">from</span> <span class="str">'ally-widget'</span>
+
+<span class="kw">export default</span> <span class="fn">defineNuxtPlugin</span><span class="punc">(() => {</span>
+  AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+<span class="punc">})</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="svelte">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>SvelteKit</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">Svelte</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">&lt;!-- src/routes/+layout.svelte --&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+  <span class="kw">import</span> <span class="punc">{</span> onMount <span class="punc">}</span> <span class="kw">from</span> <span class="str">'svelte'</span>
+
+  <span class="fn">onMount</span><span class="punc">(async () => {</span>
+    <span class="kw">const</span> <span class="punc">{</span> <span class="kw">default</span><span class="punc">:</span> AllyWidget <span class="punc">}</span> <span class="punc">=</span> <span class="kw">await</span> <span class="kw">import</span><span class="punc">(</span><span class="str">'ally-widget'</span><span class="punc">)</span>
+    AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+  <span class="punc">})</span>
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="punc">&lt;</span>slot <span class="punc">/&gt;</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="astro">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Astro</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">Astro</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">&lt;!-- src/layouts/Layout.astro --&gt;</span>
+<span class="punc">&lt;</span>html lang<span class="punc">=</span><span class="str">"en"</span><span class="punc">&gt;</span>
+  <span class="punc">&lt;</span>body<span class="punc">&gt;</span>
+    <span class="punc">&lt;</span>slot <span class="punc">/&gt;</span>
+
+    <span class="cm">&lt;!-- runs in the browser only --&gt;</span>
+    <span class="kw">&lt;script&gt;</span>
+      <span class="kw">import</span> AllyWidget <span class="kw">from</span> <span class="str">'ally-widget'</span>
+      AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+    <span class="kw">&lt;/script&gt;</span>
+  <span class="punc">&lt;/</span>body<span class="punc">&gt;</span>
+<span class="punc">&lt;/</span>html<span class="punc">&gt;</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="wordpress">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>WordPress</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">PHP</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">// functions.php</span>
+<span class="kw">function</span> <span class="fn">enqueue_ally_widget</span><span class="punc">() {</span>
+  <span class="fn">wp_enqueue_script</span><span class="punc">(</span>
+    <span class="str">'ally-widget'</span><span class="punc">,</span>
+    <span class="str">'https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js'</span><span class="punc">,</span>
+    <span class="punc">[],</span> <span class="str">'1.0.0'</span><span class="punc">,</span> <span class="kw">true</span>
+  <span class="punc">);</span>
+  <span class="fn">wp_add_inline_script</span><span class="punc">(</span>
+    <span class="str">'ally-widget'</span><span class="punc">,</span>
+    <span class="str">"window.AllyWidgetOptions = {
+      primaryColor: '#6366f1',
+      poweredByText: '"</span> <span class="punc">.</span> <span class="fn">get_bloginfo</span><span class="punc">(</span><span class="str">'name'</span><span class="punc">) .</span> <span class="str">"'
+    };"</span><span class="punc">,</span>
+    <span class="str">'before'</span>
+  <span class="punc">);</span>
+<span class="punc">}</span>
+<span class="fn">add_action</span><span class="punc">(</span><span class="str">'wp_enqueue_scripts'</span><span class="punc">,</span> <span class="str">'enqueue_ally_widget'</span><span class="punc">);</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="laravel">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Laravel / Blade</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">Blade</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">{{-- resources/views/layouts/app.blade.php --}}</span>
+<span class="kw">&lt;script&gt;</span>
+  <span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+    <span class="prop">primaryColor</span><span class="punc">:</span>  <span class="str">'#6366f1'</span><span class="punc">,</span>
+    <span class="prop">poweredByText</span><span class="punc">:</span> <span class="str">'{{ config("app.name") }}'</span>
+  <span class="punc">};</span>
+<span class="kw">&lt;/script&gt;</span>
+<span class="kw">&lt;script </span><span class="prop">src</span><span class="punc">=</span><span class="str">"{{ asset('vendor/ally-widget/ally-widget.min.js') }}"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="angular">
+      <div class="section-eyebrow">Frameworks</div>
+      <h2>Angular</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">TypeScript</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="cm">// src/app/app.component.ts</span>
+<span class="kw">import</span> <span class="punc">{</span> Component<span class="punc">,</span> AfterViewInit <span class="punc">}</span> <span class="kw">from</span> <span class="str">'@angular/core'</span>
+
+<span class="punc">@</span><span class="fn">Component</span><span class="punc">({</span> <span class="prop">selector</span><span class="punc">:</span> <span class="str">'app-root'</span><span class="punc">,</span> <span class="prop">templateUrl</span><span class="punc">:</span> <span class="str">'./app.component.html'</span> <span class="punc">})</span>
+<span class="kw">export class</span> AppComponent <span class="kw">implements</span> AfterViewInit <span class="punc">{</span>
+  <span class="kw">async</span> <span class="fn">ngAfterViewInit</span><span class="punc">() {</span>
+    <span class="kw">const</span> <span class="punc">{</span> <span class="kw">default</span><span class="punc">:</span> AllyWidget <span class="punc">}</span> <span class="punc">=</span> <span class="kw">await</span> <span class="kw">import</span><span class="punc">(</span><span class="str">'ally-widget'</span><span class="punc">)</span>
+    AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span> <span class="prop">primaryColor</span><span class="punc">:</span> <span class="str">'#6366f1'</span> <span class="punc">})</span>
+  <span class="punc">}</span>
+<span class="punc">}</span></pre>
+      </div>
+    </section>
+
+    <!-- ── Customization Guide ──────────────────────────────────────────────── -->
+    <section class="section" id="custom-theme">
+      <div class="section-eyebrow">Customization</div>
+      <h2>Customization Guide</h2>
+      <p>Every aspect of the widget is configurable without touching source code.</p>
+
+      <h3>Colour theme</h3>
+      <p>Pass any CSS colour value. The entire panel re-derives from these tokens — change one, the whole thing updates.</p>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS — dark brand example</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="prop">primaryColor</span><span class="punc">:</span>       <span class="str">'#e11d48'</span><span class="punc">,</span>
+  <span class="prop">primaryColorLight</span><span class="punc">:</span>  <span class="str">'#fb7185'</span><span class="punc">,</span>
+  <span class="prop">primaryColorDark</span><span class="punc">:</span>   <span class="str">'#9f1239'</span><span class="punc">,</span>
+  <span class="cm">// dark panel</span>
+  <span class="prop">backgroundColor</span><span class="punc">:</span>    <span class="str">'#0f172a'</span><span class="punc">,</span>
+  <span class="prop">textColor</span><span class="punc">:</span>          <span class="str">'#e2e8f0'</span><span class="punc">,</span>
+  <span class="prop">cardBackground</span><span class="punc">:</span>     <span class="str">'#1e293b'</span><span class="punc">,</span>
+  <span class="prop">borderColor</span><span class="punc">:</span>        <span class="str">'#334155'</span><span class="punc">,</span>
+  <span class="cm">// shape</span>
+  <span class="prop">borderRadius</span><span class="punc">:</span>       <span class="str">'8px'</span><span class="punc">,</span>
+  <span class="prop">buttonBorderRadius</span><span class="punc">:</span> <span class="str">'12px'</span>   <span class="cm">// 50% = circle</span>
+<span class="punc">})</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="custom-features">
+      <div class="section-eyebrow">Customization</div>
+      <h2>Features</h2>
+
+      <h3>Disable features you don't need</h3>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="prop">disableFeatures</span><span class="punc">: [</span>
+    <span class="str">'readable-text'</span><span class="punc">,</span>        <span class="cm">// remove Dyslexia Font</span>
+    <span class="str">'hide-images'</span><span class="punc">,</span>
+    <span class="str">'annotations'</span><span class="punc">,</span>          <span class="cm">// always hide dev tools in prod</span>
+    <span class="str">'accessibility-report'</span>
+  <span class="punc">]</span>
+<span class="punc">})</span></pre>
+      </div>
+
+      <h3>Rename or re-icon any button</h3>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="prop">featureOverrides</span><span class="punc">: {</span>
+    <span class="str">'text-to-speech'</span><span class="punc">: {</span> <span class="prop">label</span><span class="punc">:</span> <span class="str">'Read Aloud'</span> <span class="punc">},</span>
+    <span class="str">'reading-aid'</span><span class="punc">:    {</span> <span class="prop">label</span><span class="punc">:</span> <span class="str">'Focus Line'</span> <span class="punc">},</span>
+    <span class="str">'bold-text'</span><span class="punc">:      {</span>
+      <span class="prop">label</span><span class="punc">:</span> <span class="str">'Bold'</span><span class="punc">,</span>
+      <span class="prop">icon</span><span class="punc">:</span>  <span class="str">'&lt;svg xmlns="…"&gt;…&lt;/svg&gt;'</span>
+    <span class="punc">}</span>
+  <span class="punc">}</span>
+<span class="punc">})</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="custom-branding">
+      <div class="section-eyebrow">Customization</div>
+      <h2>Branding &amp; Position</h2>
+
+      <h3>Footer link</h3>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="prop">poweredByText</span><span class="punc">:</span> <span class="str">'My Company'</span><span class="punc">,</span>
+  <span class="prop">poweredByUrl</span><span class="punc">:</span>  <span class="str">'https://mycompany.com'</span>
+<span class="punc">})</span></pre>
+      </div>
+
+      <h3>Button position &amp; size</h3>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="prop">position</span><span class="punc">:</span> <span class="str">'bottom-left'</span><span class="punc">,</span>  <span class="cm">// bottom-right | bottom-left | top-right | top-left</span>
+  <span class="prop">offset</span><span class="punc">:</span>   <span class="punc">[</span><span class="num">24</span><span class="punc">,</span> <span class="num">32</span><span class="punc">],</span>         <span class="cm">// [horizontal, vertical] px</span>
+  <span class="prop">size</span><span class="punc">:</span>     <span class="str">'60px'</span><span class="punc">,</span>
+  <span class="prop">icon</span><span class="punc">:</span>     <span class="str">'universal'</span>      <span class="cm">// or any SVG string</span>
+<span class="punc">})</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="custom-callbacks">
+      <div class="section-eyebrow">Customization</div>
+      <h2>Callbacks</h2>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="fn">onOpen</span><span class="punc">()  {</span> analytics<span class="punc">.</span><span class="fn">track</span><span class="punc">(</span><span class="str">'ally_open'</span><span class="punc">) },</span>
+  <span class="fn">onClose</span><span class="punc">() {</span> analytics<span class="punc">.</span><span class="fn">track</span><span class="punc">(</span><span class="str">'ally_close'</span><span class="punc">) },</span>
+
+  <span class="fn">onFeatureToggle</span><span class="punc">(</span>key<span class="punc">,</span> enabled<span class="punc">) {</span>
+    <span class="cm">// key: 'bold-text' | 'contrast-toggle' | 'text-to-speech' | …</span>
+    analytics<span class="punc">.</span><span class="fn">track</span><span class="punc">(</span><span class="str">'ally_feature'</span><span class="punc">, {</span> key<span class="punc">,</span> enabled <span class="punc">})</span>
+  <span class="punc">},</span>
+
+  <span class="fn">onReset</span><span class="punc">() {</span> analytics<span class="punc">.</span><span class="fn">track</span><span class="punc">(</span><span class="str">'ally_reset'</span><span class="punc">) }</span>
+<span class="punc">})</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="full-example">
+      <div class="section-eyebrow">Customization</div>
+      <h2>Full Example</h2>
+      <p>Everything configured in one place.</p>
+      <div class="code-block">
+        <div class="code-block-header"><span class="code-lang">JS</span><button class="code-copy" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button></div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="cm">// placement</span>
+  <span class="prop">position</span><span class="punc">:</span>         <span class="str">'bottom-right'</span><span class="punc">,</span>
+  <span class="prop">offset</span><span class="punc">:</span>           <span class="punc">[</span><span class="num">20</span><span class="punc">,</span> <span class="num">20</span><span class="punc">],</span>
+  <span class="prop">size</span><span class="punc">:</span>             <span class="str">'56px'</span><span class="punc">,</span>
+  <span class="prop">keyboardShortcut</span><span class="punc">:</span> <span class="kw">true</span><span class="punc">,</span>          <span class="cm">// Alt+A</span>
+
+  <span class="cm">// language</span>
+  <span class="prop">lang</span><span class="punc">:</span>             <span class="str">'ne'</span><span class="punc">,</span>          <span class="cm">// 'en' | 'ne'</span>
+  <span class="prop">storageKey</span><span class="punc">:</span>       <span class="str">'myapp-ally'</span><span class="punc">,</span>
+
+  <span class="cm">// branding</span>
+  <span class="prop">poweredByText</span><span class="punc">:</span>    <span class="str">'My Company'</span><span class="punc">,</span>
+  <span class="prop">poweredByUrl</span><span class="punc">:</span>     <span class="str">'https://mycompany.com'</span><span class="punc">,</span>
+
+  <span class="cm">// theme</span>
+  <span class="prop">primaryColor</span><span class="punc">:</span>     <span class="str">'#6366f1'</span><span class="punc">,</span>
+  <span class="prop">borderRadius</span><span class="punc">:</span>     <span class="str">'12px'</span><span class="punc">,</span>
+  <span class="prop">buttonBorderRadius</span><span class="punc">:</span> <span class="str">'50%'</span><span class="punc">,</span>
+
+  <span class="cm">// features</span>
+  <span class="prop">disableFeatures</span><span class="punc">:</span>  <span class="punc">[</span><span class="str">'annotations'</span><span class="punc">,</span> <span class="str">'accessibility-report'</span><span class="punc">],</span>
+  <span class="prop">featureOverrides</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="str">'text-to-speech'</span><span class="punc">: {</span> <span class="prop">label</span><span class="punc">:</span> <span class="str">'Read Aloud'</span> <span class="punc">}</span>
+  <span class="punc">},</span>
+
+  <span class="cm">// TTS</span>
+  <span class="prop">ttsNativeVoiceLang</span><span class="punc">:</span> <span class="str">'ne-NP'</span><span class="punc">,</span>
+  <span class="prop">ttsRate</span><span class="punc">:</span>           <span class="num">0.9</span><span class="punc">,</span>
+
+  <span class="cm">// callbacks</span>
+  <span class="fn">onOpen</span><span class="punc">()  {</span> console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">'opened'</span><span class="punc">) },</span>
+  <span class="fn">onClose</span><span class="punc">() {</span> console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">'closed'</span><span class="punc">) },</span>
+  <span class="fn">onFeatureToggle</span><span class="punc">(</span>key<span class="punc">,</span> enabled<span class="punc">) {</span> console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span>key<span class="punc">,</span> enabled<span class="punc">) },</span>
+  <span class="fn">onReset</span><span class="punc">() {</span> console<span class="punc">.</span><span class="fn">log</span><span class="punc">(</span><span class="str">'reset'</span><span class="punc">) }</span>
+<span class="punc">};</span></pre>
+      </div>
+    </section>
+
+    <section class="section" id="publishing">
+      <div class="section-eyebrow">Publishing</div>
+      <h2>npm Publish</h2>
+      <p>Build all output formats, then publish to npm. The <code>.npmrc</code> reads your token from the environment automatically.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">Shell</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="cm"># Set your token (from .env or CI secret)</span>
+<span class="kw">export</span> NPM_TOKEN<span class="punc">=</span>your_token_here
+
+<span class="cm"># Build all formats, then publish</span>
+npm run build
+npm publish</pre>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">🔐</span>
+        <span>Store your token in <code>.env</code> (gitignored). The project <code>.npmrc</code> reads <code>${NPM_TOKEN}</code> automatically — your token never touches source control.</span>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  // Tab switching
+  function switchTab(group, id, btn) {
+    const panels = document.querySelectorAll(`[id^="${group}-"]`);
+    panels.forEach(p => p.classList.remove('active'));
+    document.getElementById(`${group}-${id}`).classList.add('active');
+    btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Copy code block
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = btn.innerHTML.replace('Copy', 'Copied!');
+      btn.style.color = 'var(--green)';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1600);
+    });
+  }
+
+  // Copy text
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.style.color = 'var(--green)';
+      setTimeout(() => { btn.style.color = ''; }, 1200);
+    });
+  }
+
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const match = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body></html>
+</body>
+</html>

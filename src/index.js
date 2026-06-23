@@ -1,8 +1,5 @@
 /*!
  * Ally Widget v1.0.0
- * https://github.com/SunilCz/ally
- *
- * Copyright (c) 2025 SunilCz
  * Released under the MIT License
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

@@ -269,7 +269,7 @@ export const uiMethods = {
 
       // Configurable branding
       const poweredByText = this.options?.poweredByText || 'Ally Widget';
-      const poweredByUrl = this.options?.poweredByUrl || 'https://github.com/SunilCz/ally';
+      const poweredByUrl = this.options?.poweredByUrl || '';
 
       const menuTemplate = `
       <div class="acc-menu" role="dialog" aria-labelledby="accessibility-title">

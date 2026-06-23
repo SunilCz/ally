@@ -4,8 +4,6 @@ import { string } from 'rollup-plugin-string';
 
 const banner = `/*!
  * Ally Widget v1.0.0
- * https://github.com/SunilCz/ally
- *
  * Released under the MIT License
  */`;
 
