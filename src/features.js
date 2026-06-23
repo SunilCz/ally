@@ -1188,15 +1188,7 @@ export const featureMethods = {
     const code = String(languageCode || 'en').toLowerCase();
     const languageMap = {
       en: 'en-US',
-      it: 'it-IT',
-      fr: 'fr-FR',
-      de: 'de-DE',
-      es: 'es-ES',
-      ru: 'ru-RU',
-      pl: 'pl-PL',
-      ro: 'ro-RO',
-      nl: 'nl-NL',
-      uk: 'uk-UA'
+      ne: 'ne-NP'
     };
     return languageMap[code] || code;
   },

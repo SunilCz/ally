@@ -18,16 +18,16 @@ export const uiMethods = {
 
   getLanguageCountryLabel(languageCode) {
     const countryByLanguage = {
-      en: 'USA', it: 'Italy', fr: 'France', de: 'Germany', es: 'Spain',
-      ru: 'Russia', pl: 'Poland', ro: 'Romania', nl: 'Netherlands', uk: 'Ukraine'
+      en: 'USA',
+      ne: 'Nepal'
     };
     return countryByLanguage[languageCode] || String(languageCode || '').toUpperCase();
   },
 
   getLanguageFlag(languageCode) {
     const countryCodeByLanguage = {
-      en: 'US', it: 'IT', fr: 'FR', de: 'DE', es: 'ES',
-      ru: 'RU', pl: 'PL', ro: 'RO', nl: 'NL', uk: 'UA'
+      en: 'US',
+      ne: 'NP'
     };
     const countryCode = (countryCodeByLanguage[languageCode] || String(languageCode || '').slice(0, 2)).toUpperCase();
     if (!/^[A-Z]{2}$/.test(countryCode)) return '';
