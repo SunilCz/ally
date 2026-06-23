@@ -353,6 +353,140 @@ Supported attributes: `data-ally-lang`, `data-ally-position`, `data-ally-offset`
 
 ---
 
+## Framework Integration
+
+### Next.js (App Router)
+
+The widget is browser-only. Use `AllyWidget.init()` inside `useEffect` so it never runs on the server.
+
+```jsx
+// components/AllyWidgetLoader.jsx
+'use client'
+import { useEffect } from 'react'
+
+export default function AllyWidgetLoader() {
+  useEffect(() => {
+    import('ally-widget').then(({ default: AllyWidget }) => {
+      AllyWidget.init({
+        position: 'bottom-right',
+        primaryColor: '#6366f1',
+        lang: 'en'
+      })
+    })
+  }, [])
+
+  return null
+}
+```
+
+```jsx
+// app/layout.jsx
+import AllyWidgetLoader from '@/components/AllyWidgetLoader'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <AllyWidgetLoader />
+      </body>
+    </html>
+  )
+}
+```
+
+### Next.js (Pages Router / `_document`)
+
+```jsx
+// pages/_app.jsx
+import { useEffect } from 'react'
+
+export default function App({ Component, pageProps }) {
+  useEffect(() => {
+    import('ally-widget').then(({ default: AllyWidget }) => {
+      AllyWidget.init({ primaryColor: '#6366f1' })
+    })
+  }, [])
+
+  return <Component {...pageProps} />
+}
+```
+
+### Next.js — CDN via `next/script` (zero npm install)
+
+```jsx
+// app/layout.jsx
+import Script from 'next/script'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Script id="ally-config" strategy="beforeInteractive">{`
+          window.AllyWidgetOptions = { primaryColor: '#6366f1' };
+        `}</Script>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/ally-widget/dist/ally-widget.min.js"
+          strategy="afterInteractive"
+        />
+      </body>
+    </html>
+  )
+}
+```
+
+### Nuxt 3
+
+```js
+// plugins/ally-widget.client.js  ← the .client suffix means browser-only
+import AllyWidget from 'ally-widget'
+
+export default defineNuxtPlugin(() => {
+  AllyWidget.init({
+    position: 'bottom-right',
+    primaryColor: '#6366f1'
+  })
+})
+```
+
+### Laravel / Blade
+
+```html
+{{-- resources/views/layouts/app.blade.php --}}
+<script>
+  window.AllyWidgetOptions = {
+    position: 'bottom-right',
+    primaryColor: '#6366f1',
+    poweredByText: '{{ config("app.name") }}'
+  };
+</script>
+<script src="{{ asset('js/ally-widget.min.js') }}"></script>
+```
+
+### `AllyWidget.init()` reference
+
+```js
+// Returns the widget instance (or null when called server-side)
+const instance = AllyWidget.init(options)
+```
+
+Accepts the same options object as the constructor. Handles `DOMContentLoaded` automatically — safe to call before the document is ready.
+
+### Disabling auto-init
+
+When importing via npm in a framework, the CDN auto-init still fires if the module loads in a browser context. Suppress it with `autoInit: false`:
+
+```html
+<script>
+  window.AllyWidgetOptions = { autoInit: false };
+</script>
+```
+
+Or when the module is loaded purely programmatically (e.g. inside `useEffect`), auto-init is already skipped because the module executes after `DOMContentLoaded` has already fired and you're calling `AllyWidget.init()` yourself.
+
+---
+
 ## Dev Mode
 
 Append `?ally-dev=true` to any URL to enable the Annotations and Accessibility Report tools. These run an axe-core scan and overlay issue markers on the page — useful during development, hidden in production.

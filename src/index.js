@@ -414,10 +414,39 @@ Object.assign(
   uiMethods
 );
 
+/**
+ * AllyWidget.init(options) — programmatic initialisation.
+ *
+ * Use this instead of the auto-init in frameworks (Next.js, Nuxt, SvelteKit…)
+ * where you control when the widget mounts:
+ *
+ *   // Next.js app router component (use client)
+ *   useEffect(() => { AllyWidget.init({ primaryColor: '#6366f1' }); }, []);
+ *
+ *   // CDN
+ *   AllyWidget.init({ lang: 'ne' });
+ *
+ * Returns the widget instance, or null when called server-side.
+ */
+AllyWidget.init = function init(options = {}) {
+  if (typeof document === 'undefined') return null;
+  const instance = new AllyWidget(options);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    instance.startAccessibleWebWidget();
+  } else {
+    document.addEventListener('DOMContentLoaded', () => instance.startAccessibleWebWidget(), { once: true });
+  }
+  return instance;
+};
+
 if (typeof window !== 'undefined') {
   window.AllyWidget = AllyWidget;
 }
 
+// Auto-init for CDN / script-tag usage.
+// Skipped when:
+//   • running server-side (no document)
+//   • window.AllyWidgetOptions.autoInit === false  (opt-out for manual control)
 if (typeof document !== 'undefined') {
   const globalAutoInitOptions = (
     typeof window !== 'undefined' &&
@@ -425,12 +454,14 @@ if (typeof document !== 'undefined') {
     typeof window.AllyWidgetOptions === 'object'
   ) ? window.AllyWidgetOptions : {};
 
-  /** @type {AllyWidgetInstance} */
-  const widgetInstance = new AllyWidget(globalAutoInitOptions);
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    widgetInstance.startAccessibleWebWidget();
-  } else {
-    document.addEventListener('DOMContentLoaded', () => widgetInstance.startAccessibleWebWidget());
+  if (globalAutoInitOptions.autoInit !== false) {
+    /** @type {AllyWidgetInstance} */
+    const widgetInstance = new AllyWidget(globalAutoInitOptions);
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      widgetInstance.startAccessibleWebWidget();
+    } else {
+      document.addEventListener('DOMContentLoaded', () => widgetInstance.startAccessibleWebWidget(), { once: true });
+    }
   }
 }
 
