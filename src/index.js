@@ -7,6 +7,80 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  * This widget does not guarantee accessibility compliance.
+ *
+ * ─── Developer Options Reference ─────────────────────────────────────────────
+ *
+ * window.AllyWidgetOptions = {
+ *   // ── Position & Size ──────────────────────────────────────────────────────
+ *   position:        'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
+ *   offset:          [20, 20]       // [horizontal, vertical] px from edge
+ *   size:            '52px'         // toggle button size (px / em / rem / %)
+ *   keyboardShortcut: true          // Alt+A to toggle (set false to disable)
+ *
+ *   // ── Language ─────────────────────────────────────────────────────────────
+ *   lang:            'en' | 'ne'
+ *
+ *   // ── Storage ──────────────────────────────────────────────────────────────
+ *   storageKey:      'ally-wgt'     // localStorage key (change to avoid collisions)
+ *
+ *   // ── Branding / Footer ────────────────────────────────────────────────────
+ *   poweredByText:   'Ally Widget'  // footer link label
+ *   poweredByUrl:    'https://...'  // footer link href
+ *
+ *   // ── Toggle Button Icon ───────────────────────────────────────────────────
+ *   icon:            'default' | 'person' | 'eye' | 'universal'  (built-in variants)
+ *                    OR any SVG string for a fully custom icon
+ *
+ *   // ── Color Theme ──────────────────────────────────────────────────────────
+ *   primaryColor:         '#4f46e5'
+ *   primaryColorLight:    '#818cf8'
+ *   primaryColorDark:     '#3730a3'
+ *   backgroundColor:      '#ffffff'
+ *   textColor:            '#1f2937'
+ *   textColorInverted:    '#ffffff'
+ *   cardBackground:       '#f9fafb'
+ *   borderColor:          '#e5e7eb'
+ *   focusRingColor:       '#4f46e5'
+ *   hoverColor:           '#f3f4f6'
+ *   activeColor:          '#ede9fe'
+ *   borderRadius:         '12px'
+ *   buttonBorderRadius:   '50%'
+ *   headerHeight:         '56px'
+ *   focusBorderWidth:     '2px'
+ *   focusOutlineOffset:   '2px'
+ *   zIndex:               9999
+ *   buttonSize:           '52px'    // alias for size
+ *
+ *   // ── OR pass all theme keys nested under `theme: {}` ──────────────────────
+ *   theme: { primaryColor: '#e11d48', borderRadius: '8px', ... }
+ *
+ *   // ── Features: disable specific features ──────────────────────────────────
+ *   disableFeatures: ['hide-images', 'dyslexia-font', 'annotations']
+ *   // All feature keys: 'bold-text' | 'line-spacing' | 'letter-spacing' |
+ *   //   'hide-images' | 'readable-text' | 'highlight-links' | 'highlight-title' |
+ *   //   'text-scale' | 'contrast-toggle' | 'invert-colors' | 'saturation-toggle' |
+ *   //   'large-pointer' | 'pause-motion' | 'reading-aid' | 'text-to-speech' |
+ *   //   'high-contrast-mode' | 'simple-layout' | 'annotations' | 'accessibility-report'
+ *
+ *   // ── Features: override label or icon for any feature ─────────────────────
+ *   featureOverrides: {
+ *     'bold-text':      { label: 'Bold', icon: '<svg>...</svg>' },
+ *     'text-to-speech': { label: 'Read Aloud' }
+ *   }
+ *
+ *   // ── TTS voice configuration ───────────────────────────────────────────────
+ *   ttsNativeVoiceName: ''    // exact voice name to prefer (e.g. 'Google हिन्दी')
+ *   ttsNativeVoiceLang: ''    // BCP-47 lang tag override (e.g. 'ne-NP')
+ *   ttsRate:            1     // speech rate 0.5–2
+ *   ttsPitch:           1     // speech pitch 0–2
+ *
+ *   // ── Event Callbacks ───────────────────────────────────────────────────────
+ *   onOpen()                         // widget menu opened
+ *   onClose()                        // widget menu closed
+ *   onFeatureToggle(key, enabled)    // a feature was toggled
+ *   onReset()                        // all settings reset
+ * };
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import { WIDGET_THEME } from './constants/theme.js';
@@ -21,7 +95,12 @@ import { uiMethods } from './ui.js';
 class AllyWidget {
   constructor(options = {}) {
     this.widgetTheme = { ...WIDGET_THEME };
-    this.widgetIcons = WIDGET_ICONS;
+
+    // Allow full icon override via options.icons
+    this.widgetIcons = options.icons && typeof options.icons === 'object'
+      ? { ...WIDGET_ICONS, ...options.icons }
+      : { ...WIDGET_ICONS };
+
     this.targetSelectors = TARGET_SELECTORS;
 
     this.visualFilters = {
@@ -50,7 +129,32 @@ class AllyWidget {
     this.translations = TRANSLATIONS;
     this.supportedLanguages = SUPPORTED_LANGUAGES.map((language) => ({ ...language }));
 
-    this.accessTools = [
+    // Build the disabled-features set for quick lookup
+    const disabledSet = new Set(
+      Array.isArray(options.disableFeatures) ? options.disableFeatures : []
+    );
+
+    // Per-feature label/icon overrides: { 'bold-text': { label: '...', icon: '...' } }
+    const featureOverrides = (options.featureOverrides && typeof options.featureOverrides === 'object')
+      ? options.featureOverrides
+      : {};
+
+    const applyOverride = (item) => {
+      const override = featureOverrides[item.key];
+      if (!override) return item;
+      return {
+        ...item,
+        ...(override.label ? { label: override.label } : {}),
+        ...(override.icon ? { icon: override.icon } : {})
+      };
+    };
+
+    const filterAndOverride = (items) =>
+      items
+        .filter(item => !disabledSet.has(item.key))
+        .map(applyOverride);
+
+    this.accessTools = filterAndOverride([
       { label: 'Big Cursor', key: 'large-pointer', icon: this.widgetIcons.largePointer },
       { label: 'Stop Animations', key: 'pause-motion', icon: this.widgetIcons.pauseMotion },
       { label: 'Reading Guide', key: 'reading-aid', icon: this.widgetIcons.readingAid },
@@ -62,18 +166,19 @@ class AllyWidget {
       },
       { label: 'High Contrast', key: 'high-contrast-mode', icon: this.widgetIcons.highContrast },
       { label: 'Simplify Layout', key: 'simple-layout', icon: this.widgetIcons.simplifyLayout }
-    ];
+    ]);
 
     if (this.isDevMode()) {
-      this.accessTools.push(
-        { label: 'Annotations', key: 'annotations', icon: this.widgetIcons.annotations },
-        {
-          label: 'Accessibility Report',
-          key: 'accessibility-report',
-          icon: this.widgetIcons.accessibilityReport,
-          isAction: true
-        }
-      );
+      if (!disabledSet.has('annotations')) {
+        this.accessTools.push(applyOverride(
+          { label: 'Annotations', key: 'annotations', icon: this.widgetIcons.annotations }
+        ));
+      }
+      if (!disabledSet.has('accessibility-report')) {
+        this.accessTools.push(applyOverride(
+          { label: 'Accessibility Report', key: 'accessibility-report', icon: this.widgetIcons.accessibilityReport, isAction: true }
+        ));
+      }
     }
 
     // axe-core state
@@ -115,7 +220,6 @@ class AllyWidget {
     this.simpleLayoutRoot = null;
     this.simpleLayoutHiddenElements = [];
 
-    // Track direct user toggles for features that have side effects.
     this.userInitiatedToggleKey = null;
 
     // Font size / multi-level state
@@ -127,7 +231,7 @@ class AllyWidget {
     this.contrastFilterValues = ['light-contrast', 'dark-contrast'];
     this.saturationFilterValues = ['low-saturation', 'high-saturation'];
 
-    this.contentOptions = [
+    this.contentOptions = filterAndOverride([
       { label: 'Font Weight', key: 'bold-text', icon: this.widgetIcons.boldText },
       { label: 'Line Height', key: 'line-spacing', icon: this.widgetIcons.lineSpacing },
       { label: 'Letter Spacing', key: 'letter-spacing', icon: this.widgetIcons.letterSpacing },
@@ -142,7 +246,7 @@ class AllyWidget {
         multiLevel: true,
         levels: this.textScaleValues.length
       }
-    ];
+    ]);
 
     this.multiLevelFeatures = {
       'text-scale': {
@@ -167,7 +271,7 @@ class AllyWidget {
       <div class="acc-rg acc-rg-bottom" role="presentation"> </div>
     `;
 
-    this.colorOptions = [
+    this.colorOptions = filterAndOverride([
       {
         label: 'Contrast',
         key: 'contrast-toggle',
@@ -183,7 +287,7 @@ class AllyWidget {
         multiLevel: true,
         levels: this.saturationFilterValues.length
       }
-    ];
+    ]);
 
     this.colorFilterKeys = Object.keys(this.visualFilters);
     this.activeColorFilterKey = null;
@@ -192,10 +296,9 @@ class AllyWidget {
     this.textScaleObserver = null;
     this.currentTextScaleMultiplier = 1;
 
-    // Global settings and state
     this.widgetConfig = {};
 
-    // Configurable storage key (avoids collision with other widgets on same domain)
+    // Configurable storage key
     this.storageKey = (typeof options.storageKey === 'string' && options.storageKey.trim())
       ? options.storageKey.trim()
       : 'ally-wgt';
@@ -203,7 +306,7 @@ class AllyWidget {
     this.readingAidVisible = false;
     this.readableFontLoaded = false;
 
-    // Menu state tracking for focus management
+    // Menu state
     this.activeMenuContainer = null;
     this.activeMenuToggle = null;
     this.menuKeyListener = null;
@@ -212,7 +315,6 @@ class AllyWidget {
     this.skipLinkElement = null;
     this.menuContainer = null;
 
-    // Style registration state
     this.staticStylesRegistered = false;
 
     this.dataOptions = this.getDataAttributeOptions();
@@ -273,23 +375,11 @@ class AllyWidget {
     };
 
     const themeKeys = [
-      'primaryColor',
-      'primaryColorLight',
-      'primaryColorDark',
-      'backgroundColor',
-      'textColor',
-      'textColorInverted',
-      'cardBackground',
-      'borderColor',
-      'focusRingColor',
-      'hoverColor',
-      'activeColor',
-      'borderRadius',
-      'buttonBorderRadius',
-      'headerHeight',
-      'focusBorderWidth',
-      'focusOutlineOffset',
-      'zIndex'
+      'primaryColor', 'primaryColorLight', 'primaryColorDark',
+      'backgroundColor', 'textColor', 'textColorInverted',
+      'cardBackground', 'borderColor', 'focusRingColor',
+      'hoverColor', 'activeColor', 'borderRadius', 'buttonBorderRadius',
+      'headerHeight', 'focusBorderWidth', 'focusOutlineOffset', 'zIndex'
     ];
 
     themeKeys.forEach((key) => {
