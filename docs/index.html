@@ -886,6 +886,7 @@ widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span
             <tr><td>lang</td><td>string</td><td>browser lang</td><td>'en' or 'ne'</td></tr>
             <tr><td>storageKey</td><td>string</td><td>'ally-wgt'</td><td>localStorage key. Change when multiple widgets share a domain</td></tr>
             <tr><td>keyboardShortcut</td><td>boolean</td><td>true</td><td>Alt+A toggles the panel. false to disable</td></tr>
+            <tr><td>showViolationBubble</td><td>boolean</td><td>true</td><td>Red badge on the toggle button showing violation count. Set false to hide it</td></tr>
             <tr><td>icon</td><td>string</td><td>'default'</td><td>Built-in variant name or raw SVG string for the toggle button</td></tr>
             <tr><td>icons</td><td>object</td><td>—</td><td>Override any icon in the full icon set</td></tr>
             <tr><td>poweredByText</td><td>string</td><td>'Ally Widget'</td><td>Footer link label</td></tr>
@@ -1197,6 +1198,21 @@ widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span
       <div class="callout tip">
         <span class="callout-icon">✅</span>
         <span>The axe-core library is loaded on demand only in dev mode. It adds zero weight to your production bundle.</span>
+      </div>
+
+      <h3>Hiding the violation badge</h3>
+      <p>The red number badge on the toggle button shows the violation count. To hide it entirely, set <code>showViolationBubble: false</code>.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre>AllyWidget<span class="punc">.</span><span class="fn">init</span><span class="punc">({</span>
+  <span class="prop">showViolationBubble</span><span class="punc">:</span> <span class="kw">false</span>   <span class="cm">// hides the red count badge on the toggle button</span>
+<span class="punc">})</span></pre>
       </div>
     </section>
 
