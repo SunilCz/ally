@@ -268,7 +268,7 @@ export const uiMethods = {
       const activeLanguageCode = String(lang || 'en').split(/[_-]/)[0].toLowerCase();
 
       // Configurable branding
-      const poweredByText = this.options?.poweredByText || 'Ally Widget';
+      const poweredByText = this.options?.poweredByText ?? 'Ally Widget';
       const poweredByUrl = this.options?.poweredByUrl || '';
 
       const menuTemplate = `
@@ -289,7 +289,7 @@ export const uiMethods = {
             <span class="acc-label">Reset settings</span>
           </button>
           <div class="acc-footer-meta">
-            <a href="${poweredByUrl}" target="_blank" rel="noopener noreferrer">${poweredByText}</a>
+            ${poweredByText ? `<a href="${poweredByUrl}" target="_blank" rel="noopener noreferrer">${poweredByText}</a>` : ''}
             <button type="button" class="acc-footer-lang-toggle" title="Language" aria-label="Language" aria-expanded="false" aria-controls="acc-lang-modal">
               <span id="acc-current-language" class="acc-footer-lang-current">${String(activeLanguageCode || 'en').toUpperCase()}</span>
               <span class="acc-footer-lang-arrow" aria-hidden="true"> </span>
