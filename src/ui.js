@@ -330,17 +330,18 @@ export const uiMethods = {
         if (!menu.hasAttribute('tabindex')) menu.setAttribute('tabindex', '-1');
       }
 
+      const normalizedOffset = this.normalizeOffset(offset) || [20, 20];
+      const offsetX = normalizedOffset[0] ?? 20;
+      const offsetY = normalizedOffset[1] ?? 25;
+
       const isRightAligned = position === 'bottom-right' || position === 'top-right' || this.widgetTheme.menuPosition === 'right';
       if (isRightAligned) {
-        menu.style.right = 'var(--acc-menu-inline-gap, 12px)';
+        menu.style.right = `${offsetX}px`;
         menu.style.left = 'auto';
       } else {
-        menu.style.left = 'var(--acc-menu-inline-gap, 12px)';
+        menu.style.left = `${offsetX}px`;
         menu.style.right = 'auto';
       }
-
-      const normalizedOffset = this.normalizeOffset(offset) || [20, 20];
-      const offsetY = normalizedOffset[1] ?? 25;
       const buttonSize = size !== undefined && size !== null && String(size).trim() !== ''
         ? this.normalizeButtonSize(size)
         : (this.widgetTheme?.buttonSize || '52px');
