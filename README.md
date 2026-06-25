@@ -99,7 +99,7 @@ widget.startAccessibleWebWidget();
 | `poweredByText` | `string` | `'Ally Widget'` | Footer link label |
 | `poweredByUrl` | `string` | widget repo URL | Footer link href |
 | `disableFeatures` | `string[]` | `[]` | Feature keys to hide from the panel (see [Feature Keys](#feature-keys)) |
-| `featureOverrides` | `object` | `{}` | Override `label` or `icon` for any feature button |
+| `featureOverrides` | `object` | `{}` | Override `label`, `icon`, `iconColor`, or `iconInnerColor` per feature key (use `'*'` as wildcard) |
 | `theme` | `object` | — | All theme tokens nested under one key (alternative to passing tokens at the top level) |
 | `ttsNativeVoiceName` | `string` | — | Exact browser voice name to prefer for TTS |
 | `ttsNativeVoiceLang` | `string` | — | BCP-47 language tag for TTS voice selection (e.g. `'ne-NP'`) |
@@ -134,24 +134,59 @@ window.AllyWidgetOptions = {
 
 | Token | Default | Notes |
 |---|---|---|
-| `primaryColor` | `#4f46e5` | Main brand color — button, active states |
-| `primaryColorLight` | `#818cf8` | Lighter tint |
-| `primaryColorDark` | `#3730a3` | Darker shade |
-| `backgroundColor` | `#ffffff` | Panel background |
-| `textColor` | `#1f2937` | Panel text |
+| `primaryColor` | `#1976d2` | Main brand color — fallback for any unset granular key |
+| `primaryColorLight` | `#42a5f5` | Lighter tint |
+| `primaryColorDark` | `#0d47a1` | Darker shade |
+| `backgroundColor` | `#f5f7fa` | Panel background |
+| `textColor` | `#222222` | Panel text |
 | `textColorInverted` | `#ffffff` | Text on primary background |
-| `cardBackground` | `#f9fafb` | Feature card background |
-| `borderColor` | `#e5e7eb` | Dividers and borders |
-| `focusRingColor` | `#4f46e5` | Keyboard focus ring |
-| `hoverColor` | `#f3f4f6` | Button hover background |
-| `activeColor` | `#ede9fe` | Active/selected button background |
-| `borderRadius` | `12px` | Panel corner radius |
-| `buttonBorderRadius` | `50%` | Toggle button shape |
-| `headerHeight` | `56px` | Panel header height |
-| `focusBorderWidth` | `2px` | Focus ring width |
+| `cardBackground` | `#ffffff` | Feature card background |
+| `borderColor` | `#d1d5db` | Dividers and borders |
+| `focusRingColor` | `#1976d2` | Keyboard focus ring |
+| `hoverColor` | `#42a5f5` | Button hover border/shadow color |
+| `activeColor` | `#0d47a1` | Legacy active color |
+| `borderRadius` | `8px` | Panel corner radius |
+| `buttonBorderRadius` | `0.4rem` | Toggle button shape |
+| `headerHeight` | `54px` | Panel header height |
+| `focusBorderWidth` | `3px` | Focus ring width |
 | `focusOutlineOffset` | `2px` | Focus ring offset |
-| `zIndex` | `9999` | Stacking context |
+| `zIndex` | `100000` | Stacking context |
 | `buttonSize` | `52px` | Alias for `size` |
+
+### Granular color tokens
+
+Each element of the widget can be independently colored. Unset keys fall back to `primaryColor`.
+
+**Toggle button (floating launcher)**
+
+| Token | Default | Controls |
+|---|---|---|
+| `toggleButtonBg` | `primaryColor` | Floating button background |
+| `toggleButtonRingColor` | `primaryColor` | Inset ring color |
+| `toggleButtonIconColor` | `#ffffff` | SVG fill on the toggle icon |
+
+**Menu header bar**
+
+| Token | Default | Controls |
+|---|---|---|
+| `menuHeaderBg` | `primaryColor` | Header background |
+| `menuHeaderColor` | `#ffffff` | Header title text and icon fill |
+
+**Feature buttons (inside the menu)**
+
+| Token | Default | Controls |
+|---|---|---|
+| `featureIconColor` | `#222222` | Default icon fill for all feature buttons |
+| `featureIconActiveColor` | `#ffffff` | Icon fill when a feature is ON |
+| `featureButtonActiveBg` | `primaryColor` | Button background when feature is ON |
+| `featureButtonActiveBorderColor` | `primaryColor` | Button border when feature is ON |
+| `featureButtonHoverBg` | `#f3f4f6` | Button hover background |
+
+**Section headings**
+
+| Token | Default | Controls |
+|---|---|---|
+| `sectionTitleColor` | `#6b7280` | Section heading text color |
 
 ---
 
@@ -225,21 +260,42 @@ window.AllyWidgetOptions = {
 
 ---
 
-## Feature Label & Icon Overrides
+## Feature Label, Icon & Color Overrides
+
+Override any feature button's label, icon SVG, or icon colors — per feature key, without touching the source.
 
 ```js
 window.AllyWidgetOptions = {
   featureOverrides: {
+    // Rename a button
     'bold-text': {
       label: 'Bold'
     },
+
+    // Rename + swap icon SVG
     'text-to-speech': {
       label: 'Read Aloud',
       icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">…</svg>'
+    },
+
+    // Color overrides — no SVG rewrite needed
+    'reading-aid': {
+      iconColor: '#0369a1'            // main icon fill
+    },
+    'contrast-toggle': {
+      iconColor: '#6d28d9',           // outer path color
+      iconInnerColor: '#c4b5fd'       // inner/secondary path color
+    },
+
+    // Wildcard — applies to all features not individually overridden
+    '*': {
+      iconColor: '#374151'
     }
   }
 };
 ```
+
+`iconColor` sets the main SVG fill. `iconInnerColor` targets secondary paths on compound icons (contrast, high-contrast, saturation, invert-colors). Both override `featureIconColor` from the theme. Per-feature values always beat the wildcard.
 
 ---
 
@@ -700,27 +756,38 @@ AllyWidget.init({
 
 ### Custom colour theme
 
-Pass any CSS value. The entire panel re-derives from these tokens:
+Pass any CSS value. Use `primaryColor` as a single fallback, or override each element independently with the granular tokens:
 
 ```js
 AllyWidget.init({
-  // Red brand
-  primaryColor:       '#e11d48',
-  primaryColorLight:  '#fb7185',
-  primaryColorDark:   '#9f1239',
+  // Single fallback — all granular keys derive from this if not set
+  primaryColor: '#e11d48',
 
-  // Dark panel
-  backgroundColor:    '#0f172a',
-  textColor:          '#e2e8f0',
-  cardBackground:     '#1e293b',
-  borderColor:        '#334155',
-  hoverColor:         '#1e293b',
-  activeColor:        '#312e81',
+  // ── Toggle button ────────────────────────────────────────
+  toggleButtonBg:       '#0f172a',     // dark button
+  toggleButtonRingColor:'#e11d48',     // red ring
+  toggleButtonIconColor:'#f8fafc',     // near-white icon
 
-  // Shape
-  borderRadius:       '8px',      // panel corners
-  buttonBorderRadius: '12px',     // toggle button (50% = circle)
-  zIndex:             99999
+  // ── Menu header ──────────────────────────────────────────
+  menuHeaderBg:         '#1e293b',     // dark header
+  menuHeaderColor:      '#ffffff',
+
+  // ── Feature buttons ──────────────────────────────────────
+  featureIconColor:     '#374151',     // default icon fill
+  featureIconActiveColor: '#ffffff',   // icon color when ON
+  featureButtonActiveBg:  '#e11d48',  // active button bg
+  featureButtonHoverBg:   '#f1f5f9',  // hover bg
+
+  // ── Section titles ───────────────────────────────────────
+  sectionTitleColor:    '#9ca3af',
+
+  // ── Panel ────────────────────────────────────────────────
+  backgroundColor:      '#0f172a',
+  cardBackground:       '#1e293b',
+  borderColor:          '#334155',
+  borderRadius:         '8px',
+  buttonBorderRadius:   '12px',
+  zIndex:               99999
 })
 ```
 
@@ -739,17 +806,27 @@ AllyWidget.init({
 
 ---
 
-### Rename or re-icon any button
+### Rename, re-icon, or recolor any button
 
 ```js
 AllyWidget.init({
   featureOverrides: {
+    // Rename
     'text-to-speech': { label: 'Read Page Aloud' },
     'reading-aid':    { label: 'Focus Line' },
-    'bold-text':      {
+
+    // Rename + custom SVG
+    'bold-text': {
       label: 'Bold',
       icon:  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">…</svg>'
-    }
+    },
+
+    // Color only — no SVG required
+    'contrast-toggle':  { iconColor: '#6d28d9', iconInnerColor: '#c4b5fd' },
+    'highlight-links':  { iconColor: '#0369a1' },
+
+    // Wildcard — all others
+    '*': { iconColor: '#374151' }
   }
 })
 ```
@@ -820,17 +897,28 @@ window.AllyWidgetOptions = {
   poweredByText:    'My Company',
   poweredByUrl:     'https://mycompany.com',
 
-  // Theme
+  // Theme — base
   primaryColor:     '#6366f1',
   borderRadius:     '12px',
   buttonBorderRadius: '50%',
   zIndex:           9999,
 
+  // Theme — granular (all optional, fall back to primaryColor)
+  toggleButtonBg:         '#6366f1',
+  toggleButtonIconColor:  '#ffffff',
+  menuHeaderBg:           '#4f46e5',
+  featureIconColor:       '#374151',
+  featureIconActiveColor: '#ffffff',
+  featureButtonActiveBg:  '#6366f1',
+  sectionTitleColor:      '#6b7280',
+
   // Features
   disableFeatures:  ['annotations', 'accessibility-report'],
 
   featureOverrides: {
-    'text-to-speech': { label: 'Read Aloud' }
+    'text-to-speech': { label: 'Read Aloud' },
+    '*':              { iconColor: '#374151' },
+    'contrast-toggle':{ iconColor: '#6366f1', iconInnerColor: '#a5b4fc' }
   },
 
   // TTS

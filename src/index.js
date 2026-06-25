@@ -52,6 +52,20 @@
  *   // ── OR pass all theme keys nested under `theme: {}` ──────────────────────
  *   theme: { primaryColor: '#e11d48', borderRadius: '8px', ... }
  *
+ *   // ── Granular Color Theme ─────────────────────────────────────────────────
+ *   // Each key is independent; unset keys fall back to primaryColor or a safe default.
+ *   toggleButtonBg:               '#1976d2'   // floating button background
+ *   toggleButtonRingColor:        '#1976d2'   // button inset ring color
+ *   toggleButtonIconColor:        '#ffffff'   // icon fill on the toggle button
+ *   menuHeaderBg:                 '#1976d2'   // menu header bar background
+ *   menuHeaderColor:              '#ffffff'   // menu header text + icon color
+ *   featureIconColor:             '#222222'   // default icon fill for all features
+ *   featureIconActiveColor:       '#ffffff'   // icon fill when a feature is ON
+ *   featureButtonActiveBg:        '#1976d2'   // button background when feature is ON
+ *   featureButtonActiveBorderColor: '#1976d2' // button border when feature is ON
+ *   featureButtonHoverBg:         '#f3f4f6'   // button hover background
+ *   sectionTitleColor:            '#6b7280'   // section heading color
+ *
  *   // ── Features: disable specific features ──────────────────────────────────
  *   disableFeatures: ['hide-images', 'dyslexia-font', 'annotations']
  *   // All feature keys: 'bold-text' | 'line-spacing' | 'letter-spacing' |
@@ -60,9 +74,11 @@
  *   //   'large-pointer' | 'pause-motion' | 'reading-aid' | 'text-to-speech' |
  *   //   'high-contrast-mode' | 'simple-layout' | 'annotations' | 'accessibility-report'
  *
- *   // ── Features: override label or icon for any feature ─────────────────────
+ *   // ── Features: override label, icon, or icon colors for any feature ─────────
  *   featureOverrides: {
- *     'bold-text':      { label: 'Bold', icon: '<svg>...</svg>' },
+ *     '*':              { iconColor: '#333' },                          // wildcard
+ *     'bold-text':      { label: 'Bold', icon: '<svg>...</svg>',
+ *                         iconColor: '#e11d48', iconInnerColor: '#fca5a5' },
  *     'text-to-speech': { label: 'Read Aloud' }
  *   }
  *

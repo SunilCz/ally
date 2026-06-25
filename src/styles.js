@@ -92,29 +92,82 @@ export const styleMethods = {
 
   applyThemeVariables() {
     if (typeof document === 'undefined') return;
+    const t = this.widgetTheme;
+    const p = t.primaryColor || '#1976d2';
     const vars = {
-      '--acc-primary-color': this.widgetTheme.primaryColor,
-      '--acc-primary-color-light': this.widgetTheme.primaryColorLight,
-      '--acc-primary-color-dark': this.widgetTheme.primaryColorDark,
-      '--acc-bg-color': this.widgetTheme.backgroundColor,
-      '--acc-text-color': this.widgetTheme.textColor,
-      '--acc-text-color-inverted': this.widgetTheme.textColorInverted,
-      '--acc-card-bg': this.widgetTheme.cardBackground,
-      '--acc-border-color': this.widgetTheme.borderColor,
-      '--acc-focus-ring-color': this.widgetTheme.focusRingColor,
-      '--acc-hover-color': this.widgetTheme.hoverColor,
-      '--acc-active-color': this.widgetTheme.activeColor,
-      '--acc-border-radius': this.widgetTheme.borderRadius,
-      '--acc-button-border-radius': this.widgetTheme.buttonBorderRadius,
-      '--acc-header-height': this.widgetTheme.headerHeight,
-      '--acc-focus-outline-width': this.widgetTheme.focusBorderWidth,
-      '--acc-focus-outline-offset': this.widgetTheme.focusOutlineOffset,
-      '--acc-widget-z-index': String(this.widgetTheme.zIndex),
-      '--acc-button-size': this.widgetTheme.buttonSize
+      '--acc-primary-color': p,
+      '--acc-primary-color-light': t.primaryColorLight,
+      '--acc-primary-color-dark': t.primaryColorDark,
+      '--acc-bg-color': t.backgroundColor,
+      '--acc-text-color': t.textColor,
+      '--acc-text-color-inverted': t.textColorInverted,
+      '--acc-card-bg': t.cardBackground,
+      '--acc-border-color': t.borderColor,
+      '--acc-focus-ring-color': t.focusRingColor || p,
+      '--acc-hover-color': t.hoverColor,
+      '--acc-active-color': t.activeColor,
+      '--acc-border-radius': t.borderRadius,
+      '--acc-button-border-radius': t.buttonBorderRadius,
+      '--acc-header-height': t.headerHeight,
+      '--acc-focus-outline-width': t.focusBorderWidth,
+      '--acc-focus-outline-offset': t.focusOutlineOffset,
+      '--acc-widget-z-index': String(t.zIndex),
+      '--acc-button-size': t.buttonSize,
+
+      // ── Granular theme vars ─────────────────────────────────────────────────
+      '--acc-toggle-btn-bg':              t.toggleButtonBg            || p,
+      '--acc-toggle-ring-color':          t.toggleButtonRingColor     || p,
+      '--acc-toggle-icon-color':          t.toggleButtonIconColor     || '#ffffff',
+      '--acc-menu-header-bg':             t.menuHeaderBg              || p,
+      '--acc-menu-header-color':          t.menuHeaderColor           || '#ffffff',
+      '--acc-feature-icon-color':         t.featureIconColor          || '#222222',
+      '--acc-feature-icon-active-color':  t.featureIconActiveColor    || '#ffffff',
+      '--acc-feature-btn-active-bg':      t.featureButtonActiveBg     || p,
+      '--acc-feature-btn-active-border':  t.featureButtonActiveBorderColor || p,
+      '--acc-feature-btn-hover-bg':       t.featureButtonHoverBg      || '#f3f4f6',
+      '--acc-section-title-color':        t.sectionTitleColor         || '#6b7280',
     };
     Object.entries(vars).forEach(([key, value]) => {
-      document.documentElement.style.setProperty(key, value);
+      if (value !== undefined && value !== null) {
+        document.documentElement.style.setProperty(key, value);
+      }
     });
+  },
+
+  injectIconColorStyles() {
+    if (typeof document === 'undefined') return;
+    const overrides = (this.options && this.options.featureOverrides) || {};
+    let css = '';
+
+    // Global featureIconColor from theme (lowest specificity — base layer)
+    const globalIconColor = this.widgetTheme && this.widgetTheme.featureIconColor;
+    if (globalIconColor) {
+      css += `.acc-btn svg path:not(.acc-icon-inner){fill:${globalIconColor};}`;
+    }
+
+    // Wildcard override from featureOverrides (mid specificity)
+    const wildcard = overrides['*'];
+    if (wildcard && wildcard.iconColor) {
+      css += `.acc-btn svg path:not(.acc-icon-inner){fill:${wildcard.iconColor};}`;
+    }
+    if (wildcard && wildcard.iconInnerColor) {
+      css += `.acc-btn svg path.acc-icon-inner{fill:${wildcard.iconInnerColor};}`;
+    }
+
+    // Per-feature overrides (highest specificity — attribute selector wins)
+    for (const key of Object.keys(overrides)) {
+      if (key === '*') continue;
+      const val = overrides[key];
+      if (!val) continue;
+      if (val.iconColor) {
+        css += `.acc-btn[data-key="${key}"] svg path:not(.acc-icon-inner){fill:${val.iconColor};}`;
+      }
+      if (val.iconInnerColor) {
+        css += `.acc-btn[data-key="${key}"] svg path.acc-icon-inner{fill:${val.iconInnerColor};}`;
+      }
+    }
+
+    if (css) this.injectStyle('ally-icon-colors', css);
   },
 
   registerStaticStyles() {

@@ -20,5 +20,25 @@ export const WIDGET_THEME = {
   menuPosition: 'right',
   zIndex: 100000,
   focusBorderWidth: '3px',
-  focusOutlineOffset: '2px'
+  focusOutlineOffset: '2px',
+
+  // ── Toggle button (floating launcher) ──────────────────────────────────────
+  // Defaults to primaryColor when not set (see applyThemeVariables fallback logic)
+  toggleButtonBg: '',
+  toggleButtonRingColor: '',
+  toggleButtonIconColor: '#ffffff',
+
+  // ── Menu chrome ────────────────────────────────────────────────────────────
+  menuHeaderBg: '',
+  menuHeaderColor: '#ffffff',
+
+  // ── Feature buttons (inside the menu) ──────────────────────────────────────
+  featureIconColor: '#222222',
+  featureIconActiveColor: '',
+  featureButtonActiveBg: '',
+  featureButtonActiveBorderColor: '',
+  featureButtonHoverBg: '#f3f4f6',
+
+  // ── Section headings ───────────────────────────────────────────────────────
+  sectionTitleColor: '#6b7280',
 };

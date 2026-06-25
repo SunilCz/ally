@@ -731,6 +731,7 @@ export const uiMethods = {
       this.options = { ...baseOptions };
       this.applyThemeOverrides(baseOptions);
       this.applyThemeVariables();
+      this.injectIconColorStyles();
       this.registerStaticStyles();
 
       this.loadConfig(false);

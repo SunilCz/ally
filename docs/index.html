@@ -685,8 +685,9 @@
     <div class="nav-group-label">Configuration</div>
     <a class="nav-link" href="#all-options">All Options</a>
     <a class="nav-link" href="#theme">Theme Tokens</a>
+    <a class="nav-link" href="#granular-theme">Granular Colors</a>
     <a class="nav-link" href="#features">Feature Keys</a>
-    <a class="nav-link" href="#overrides">Label &amp; Icon Overrides</a>
+    <a class="nav-link" href="#overrides">Label, Icon &amp; Color Overrides</a>
   </div>
 
   <div class="nav-group">
@@ -715,7 +716,7 @@
 
   <div class="nav-group">
     <div class="nav-group-label">Customization</div>
-    <a class="nav-link" href="#custom-theme">Theme</a>
+    <a class="nav-link" href="#custom-theme">Theme &amp; Colors</a>
     <a class="nav-link" href="#custom-features">Features</a>
     <a class="nav-link" href="#custom-branding">Branding</a>
     <a class="nav-link" href="#custom-callbacks">Callbacks</a>
@@ -892,7 +893,7 @@ widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span
             <tr><td>poweredByText</td><td>string</td><td>'Ally Widget'</td><td>Footer link label</td></tr>
             <tr><td>poweredByUrl</td><td>string</td><td>repo URL</td><td>Footer link href</td></tr>
             <tr><td>disableFeatures</td><td>string[]</td><td>[]</td><td>Feature keys to hide from the panel</td></tr>
-            <tr><td>featureOverrides</td><td>object</td><td>{}</td><td>Override label or icon per feature key</td></tr>
+            <tr><td>featureOverrides</td><td>object</td><td>{}</td><td>Override <code>label</code>, <code>icon</code>, <code>iconColor</code>, or <code>iconInnerColor</code> per feature key. Use <code>'*'</code> as a wildcard for all features</td></tr>
             <tr><td>theme</td><td>object</td><td>—</td><td>All theme tokens grouped under one key</td></tr>
             <tr><td>ttsNativeVoiceName</td><td>string</td><td>—</td><td>Exact browser voice name to prefer</td></tr>
             <tr><td>ttsNativeVoiceLang</td><td>string</td><td>—</td><td>BCP-47 tag for TTS voice (e.g. 'ne-NP')</td></tr>
@@ -944,6 +945,88 @@ widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span
         <div class="swatch"><div class="swatch-color" style="background:#f9fafb; border:1px solid #e5e7eb"></div><div class="swatch-info"><div class="swatch-token">cardBackground</div><div class="swatch-hex">#f9fafb</div></div></div>
         <div class="swatch"><div class="swatch-color" style="background:#ede9fe"></div><div class="swatch-info"><div class="swatch-token">activeColor</div><div class="swatch-hex">#ede9fe</div></div></div>
         <div class="swatch"><div class="swatch-color" style="background:#e5e7eb"></div><div class="swatch-info"><div class="swatch-token">borderColor</div><div class="swatch-hex">#e5e7eb</div></div></div>
+      </div>
+    </section>
+
+    <!-- Granular Theme -->
+    <section class="section" id="granular-theme">
+      <div class="section-eyebrow">Configuration</div>
+      <h2>Granular Color Tokens</h2>
+      <p>Every element of the widget can be colored independently. Unset keys fall back to <code>primaryColor</code>. All tokens are accepted flat on <code>AllyWidgetOptions</code> or nested under <code>theme: {}</code>.</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <span>Set only <code>primaryColor</code> for a single-color theme. Add granular keys only for the elements you want to color differently — they always take precedence.</span>
+      </div>
+
+      <h3>Toggle Button</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Token</th><th>Default</th><th>Controls</th></tr></thead>
+          <tbody>
+            <tr><td>toggleButtonBg</td><td>primaryColor</td><td>Floating button background</td></tr>
+            <tr><td>toggleButtonRingColor</td><td>primaryColor</td><td>Inset ring color</td></tr>
+            <tr><td>toggleButtonIconColor</td><td>#ffffff</td><td>SVG fill on the toggle icon</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Menu Header</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Token</th><th>Default</th><th>Controls</th></tr></thead>
+          <tbody>
+            <tr><td>menuHeaderBg</td><td>primaryColor</td><td>Header bar background</td></tr>
+            <tr><td>menuHeaderColor</td><td>#ffffff</td><td>Header title text and icon fill</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Feature Buttons</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Token</th><th>Default</th><th>Controls</th></tr></thead>
+          <tbody>
+            <tr><td>featureIconColor</td><td>#222222</td><td>Default icon fill for all feature buttons</td></tr>
+            <tr><td>featureIconActiveColor</td><td>#ffffff</td><td>Icon fill when a feature is ON</td></tr>
+            <tr><td>featureButtonActiveBg</td><td>primaryColor</td><td>Button background when feature is ON</td></tr>
+            <tr><td>featureButtonActiveBorderColor</td><td>primaryColor</td><td>Button border when feature is ON</td></tr>
+            <tr><td>featureButtonHoverBg</td><td>#f3f4f6</td><td>Button hover background</td></tr>
+            <tr><td>sectionTitleColor</td><td>#6b7280</td><td>Section heading text color</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="code-copy" onclick="copyCode(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
+  <span class="cm">// base fallback</span>
+  <span class="prop">primaryColor</span><span class="punc">:</span>              <span class="str">'#1976d2'</span><span class="punc">,</span>
+
+  <span class="cm">// toggle button — different from menu</span>
+  <span class="prop">toggleButtonBg</span><span class="punc">:</span>           <span class="str">'#0f172a'</span><span class="punc">,</span>
+  <span class="prop">toggleButtonRingColor</span><span class="punc">:</span>    <span class="str">'#1976d2'</span><span class="punc">,</span>
+  <span class="prop">toggleButtonIconColor</span><span class="punc">:</span>    <span class="str">'#f8fafc'</span><span class="punc">,</span>
+
+  <span class="cm">// menu header — different from toggle button</span>
+  <span class="prop">menuHeaderBg</span><span class="punc">:</span>             <span class="str">'#1e40af'</span><span class="punc">,</span>
+  <span class="prop">menuHeaderColor</span><span class="punc">:</span>          <span class="str">'#ffffff'</span><span class="punc">,</span>
+
+  <span class="cm">// feature buttons inside the menu</span>
+  <span class="prop">featureIconColor</span><span class="punc">:</span>         <span class="str">'#374151'</span><span class="punc">,</span>  <span class="cm">// default icon fill</span>
+  <span class="prop">featureIconActiveColor</span><span class="punc">:</span>   <span class="str">'#ffffff'</span><span class="punc">,</span>   <span class="cm">// icon when ON</span>
+  <span class="prop">featureButtonActiveBg</span><span class="punc">:</span>    <span class="str">'#1e40af'</span><span class="punc">,</span>  <span class="cm">// button bg when ON</span>
+  <span class="prop">featureButtonHoverBg</span><span class="punc">:</span>     <span class="str">'#f1f5f9'</span><span class="punc">,</span>
+
+  <span class="cm">// section titles</span>
+  <span class="prop">sectionTitleColor</span><span class="punc">:</span>        <span class="str">'#9ca3af'</span>
+<span class="punc">};</span></pre>
       </div>
     </section>
 
@@ -1014,8 +1097,25 @@ widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span
     <!-- Overrides -->
     <section class="section" id="overrides">
       <div class="section-eyebrow">Configuration</div>
-      <h2>Label &amp; Icon Overrides</h2>
-      <p>Rename any button or swap its icon — per feature, without touching the source.</p>
+      <h2>Label, Icon &amp; Color Overrides</h2>
+      <p>Rename any button, swap its icon SVG, or change its icon colors — per feature key, without touching the source. All fields are optional and can be combined freely.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>label</td><td>string</td><td>Replaces the button label text</td></tr>
+            <tr><td>icon</td><td>SVG string</td><td>Replaces the full icon SVG</td></tr>
+            <tr><td>iconColor</td><td>CSS color</td><td>Sets the main SVG path fill — no SVG rewrite needed</td></tr>
+            <tr><td>iconInnerColor</td><td>CSS color</td><td>Sets the secondary/inner path fill on compound icons (contrast, saturation, invert-colors, high-contrast)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <span>Use <code>'*'</code> as a wildcard key to apply <code>iconColor</code> / <code>iconInnerColor</code> to all features at once. Per-feature keys always override the wildcard.</span>
+      </div>
 
       <div class="code-block">
         <div class="code-block-header">
@@ -1027,17 +1127,42 @@ widget<span class="punc">.</span><span class="fn">startAccessibleWebWidget</span
         </div>
         <pre><span class="prop">window</span><span class="punc">.</span><span class="fn">AllyWidgetOptions</span> <span class="punc">= {</span>
   <span class="prop">featureOverrides</span><span class="punc">:</span> <span class="punc">{</span>
+    <span class="cm">// wildcard — set all icon colors at once</span>
+    <span class="str">'*'</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">iconColor</span><span class="punc">:</span> <span class="str">'#374151'</span> <span class="punc">},</span>
+
+    <span class="cm">// rename only</span>
     <span class="str">'bold-text'</span><span class="punc">:</span> <span class="punc">{</span> <span class="prop">label</span><span class="punc">:</span> <span class="str">'Bold'</span> <span class="punc">},</span>
+
+    <span class="cm">// rename + custom SVG</span>
     <span class="str">'text-to-speech'</span><span class="punc">:</span> <span class="punc">{</span>
       <span class="prop">label</span><span class="punc">:</span> <span class="str">'Read Aloud'</span><span class="punc">,</span>
       <span class="prop">icon</span><span class="punc">:</span>  <span class="str">'&lt;svg xmlns="…"&gt;…&lt;/svg&gt;'</span>
-    <span class="punc">}</span>
+    <span class="punc">},</span>
+
+    <span class="cm">// color only — outer + inner path independently</span>
+    <span class="str">'contrast-toggle'</span><span class="punc">:</span> <span class="punc">{</span>
+      <span class="prop">iconColor</span><span class="punc">:</span>      <span class="str">'#6d28d9'</span><span class="punc">,</span>  <span class="cm">// outer shape</span>
+      <span class="prop">iconInnerColor</span><span class="punc">:</span> <span class="str">'#c4b5fd'</span>   <span class="cm">// inner shape</span>
+    <span class="punc">},</span>
+    <span class="str">'reading-aid'</span><span class="punc">:</span>   <span class="punc">{</span> <span class="prop">iconColor</span><span class="punc">:</span> <span class="str">'#0369a1'</span> <span class="punc">}</span>
   <span class="punc">},</span>
+
   <span class="cm">// swap the toggle button icon globally</span>
   <span class="prop">icons</span><span class="punc">:</span> <span class="punc">{</span>
     <span class="prop">accessibility</span><span class="punc">:</span> <span class="str">'&lt;svg&gt;…&lt;/svg&gt;'</span>
   <span class="punc">}</span>
 <span class="punc">};</span></pre>
+      </div>
+
+      <h3>Compound icons with inner paths</h3>
+      <p>These icons have two distinct visual regions — <code>iconInnerColor</code> targets the secondary path:</p>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-card-key">contrast-toggle</div><div class="feature-card-label">Split screen shape</div></div>
+        <div class="feature-card"><div class="feature-card-key">high-contrast-mode</div><div class="feature-card-label">Half-circle fill</div></div>
+        <div class="feature-card"><div class="feature-card-key">dark-contrast / light-contrast</div><div class="feature-card-label">Moon / sun inner</div></div>
+        <div class="feature-card"><div class="feature-card-key">invert-colors</div><div class="feature-card-label">Inner overlay shapes</div></div>
+        <div class="feature-card"><div class="feature-card-key">saturation-toggle</div><div class="feature-card-label">Droplet inner half</div></div>
+        <div class="feature-card"><div class="feature-card-key">simplify-layout</div><div class="feature-card-label">Bottom stripe</div></div>
       </div>
     </section>
 

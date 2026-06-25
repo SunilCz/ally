@@ -41,7 +41,7 @@
   padding: 0 var(--acc-content-inline-padding);
   height: var(--acc-header-height);
   font-weight: 700 !important;
-  background-color: var(--acc-primary-color) !important;
+  background-color: var(--acc-menu-header-bg, var(--acc-primary-color)) !important;
 }
 
 .acc-menu-title {
@@ -49,12 +49,12 @@
   align-items: center;
   gap: 10px;
   font-size: 18px !important;
-  color: var(--acc-text-color-inverted) !important;
+  color: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
   font-weight: bold;
 }
 
 .acc-menu-title .acc-label {
-  color: var(--acc-text-color-inverted) !important;
+  color: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
 }
 
 .acc-menu-title-icon {
@@ -68,7 +68,7 @@
 }
 
 .acc-menu-title-icon svg {
-  fill: var(--acc-text-color-inverted) !important;
+  fill: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
   width: 18px !important;
   height: 18px !important;
   min-width: 18px !important;
@@ -92,14 +92,14 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  color: var(--acc-text-color-inverted) !important;
+  color: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
   transition: background-color 0.2s ease;
   border-radius: 4px;
   visibility: hidden;
 }
 
 .acc-back-btn > span {
-  color: var(--acc-text-color-inverted) !important;
+  color: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
 }
 
 .acc-back-btn.visible {
@@ -116,7 +116,7 @@
 }
 
 .acc-back-btn svg {
-  fill: var(--acc-text-color-inverted) !important;
+  fill: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
   width: 24px !important;
   height: 24px !important;
 }
@@ -138,7 +138,7 @@
 }
 
 .acc-menu-header svg {
-  fill: var(--acc-text-color-inverted) !important;
+  fill: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
   width: 28px !important;
   height: 28px !important;
   min-width: 28px !important;
@@ -408,7 +408,7 @@
   font-weight: 700 !important;
   letter-spacing: 0.01em !important;
   text-transform: none;
-  color: #6b7280 !important;
+  color: var(--acc-section-title-color, #6b7280) !important;
   padding: 0 2px;
 }
 
@@ -671,6 +671,7 @@
 }
 
 .acc-btn:hover {
+  background-color: var(--acc-feature-btn-hover-bg, #f3f4f6) !important;
   border-color: var(--acc-hover-color) !important;
   border-width: 1px !important;
   box-shadow: inset 0 0 0 1px var(--acc-hover-color);
@@ -704,13 +705,22 @@
   min-height: 24px !important;
   max-width: 24px !important;
   max-height: 24px !important;
-  fill: var(--acc-text-color);
+  fill: var(--acc-feature-icon-color, var(--acc-text-color));
+}
+
+.acc-btn svg path:not(.acc-icon-inner) {
+  fill: var(--acc-feature-icon-color, var(--acc-text-color));
+}
+
+.acc-btn svg path.acc-icon-inner {
+  fill: var(--acc-feature-icon-color, var(--acc-text-color));
+  opacity: 0.45;
 }
 
 /* Selected state */
 .acc-btn.acc-selected {
-  background-color: var(--acc-primary-color) !important;
-  border-color: var(--acc-primary-color) !important;
+  background-color: var(--acc-feature-btn-active-bg, var(--acc-primary-color)) !important;
+  border-color: var(--acc-feature-btn-active-border, var(--acc-primary-color)) !important;
 }
 
 .acc-btn.acc-selected .acc-progress-dot {
@@ -724,8 +734,13 @@
 .acc-btn.acc-selected svg,
 .acc-btn.acc-selected span,
 .acc-btn.acc-selected .acc-label {
-  fill: var(--acc-text-color-inverted) !important;
-  color: var(--acc-text-color-inverted) !important;
+  fill: var(--acc-feature-icon-active-color, var(--acc-text-color-inverted)) !important;
+  color: var(--acc-feature-icon-active-color, var(--acc-text-color-inverted)) !important;
+}
+
+.acc-btn.acc-selected svg path:not(.acc-icon-inner),
+.acc-btn.acc-selected svg path.acc-icon-inner {
+  fill: var(--acc-feature-icon-active-color, var(--acc-text-color-inverted)) !important;
 }
 
 .acc-btn.acc-tts-toggle.acc-selected {
@@ -775,7 +790,7 @@
   padding: 12px 16px;
   border: none;
   border-radius: var(--acc-button-border-radius);
-  background-color: var(--acc-primary-color) !important;
+  background-color: var(--acc-menu-header-bg, var(--acc-primary-color)) !important;
   cursor: pointer;
   transition: background-color 0.2s ease;
   white-space: nowrap;
