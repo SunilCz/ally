@@ -164,6 +164,15 @@ Each element of the widget can be independently colored. Unset keys fall back to
 | `toggleButtonBg` | `primaryColor` | Floating button background |
 | `toggleButtonRingColor` | `primaryColor` | Inset ring color |
 | `toggleButtonIconColor` | `#ffffff` | SVG fill on the toggle icon |
+| `toggleButtonBorderRadius` | `50%` | Button corner radius (e.g. `'16px'` for rounded-square) |
+| `toggleButtonShadow` | `0 4px 14px rgba(0,0,0,0.22)` | Resting drop shadow |
+| `toggleButtonShadowHover` | `0 8px 22px rgba(0,0,0,0.22)` | Shadow on hover / focus |
+| `toggleButtonLabel` | `'Accessibility'` | Text revealed on hover-expand |
+| `toggleButtonShortcut` | `''` | Shortcut hint revealed on hover-expand (e.g. `'Ctrl+F2'`) |
+| `toggleLabelFontSize` | `1rem` | Font size of the hover label |
+| `toggleLabelFontWeight` | `700` | Font weight of the hover label |
+| `toggleShortcutFontSize` | `0.7rem` | Font size of the shortcut hint |
+| `toggleShortcutFontWeight` | `600` | Font weight of the shortcut hint |
 
 **Menu header bar**
 
@@ -793,15 +802,45 @@ AllyWidget.init({
 
 ---
 
-### Custom branding
+### Expanding FAB toggle button
 
-Replace the footer link with your own:
+The toggle button expands on hover to reveal a label and optional keyboard shortcut. All aspects are configurable:
 
 ```js
 AllyWidget.init({
-  poweredByText: 'My Company',
+  size:                    '58px',
+  toggleButtonBg:          '#C5161D',     // button background
+  toggleButtonIconColor:   '#ffffff',     // icon color
+  toggleButtonBorderRadius:'16px',        // rounded-square (use '50%' for circle)
+  toggleButtonShadow:      '0 4px 14px rgba(0,0,0,0.25)',
+  toggleButtonShadowHover: '0 8px 22px rgba(0,0,0,0.28)',
+
+  // Text revealed on hover
+  toggleButtonLabel:       'Accessibility',
+  toggleButtonShortcut:    'Ctrl+F2',     // omit or set '' to hide
+  toggleLabelFontSize:     '1.1rem',
+  toggleLabelFontWeight:   '700',
+  toggleShortcutFontSize:  '0.7rem',
+  toggleShortcutFontWeight:'600',
+})
+```
+
+The button animates from its square size to roughly 3× its width on hover, then snaps back when the menu is open.
+
+---
+
+### Custom branding
+
+Replace the footer link with your own, or pass an empty string to hide it entirely:
+
+```js
+AllyWidget.init({
+  poweredByText: 'My Company',      // shown in the menu footer
   poweredByUrl:  'https://mycompany.com'
 })
+
+// Hide the branding link completely:
+AllyWidget.init({ poweredByText: '' })
 ```
 
 ---
@@ -903,9 +942,20 @@ window.AllyWidgetOptions = {
   buttonBorderRadius: '50%',
   zIndex:           9999,
 
-  // Theme — granular (all optional, fall back to primaryColor)
-  toggleButtonBg:         '#6366f1',
-  toggleButtonIconColor:  '#ffffff',
+  // Theme — toggle button FAB
+  toggleButtonBg:           '#6366f1',
+  toggleButtonIconColor:    '#ffffff',
+  toggleButtonBorderRadius: '50%',
+  toggleButtonShadow:       '0 4px 14px rgba(0,0,0,0.22)',
+  toggleButtonShadowHover:  '0 8px 22px rgba(0,0,0,0.22)',
+  toggleButtonLabel:        'Accessibility',
+  toggleButtonShortcut:     'Ctrl+F2',
+  toggleLabelFontSize:      '1rem',
+  toggleLabelFontWeight:    '700',
+  toggleShortcutFontSize:   '0.7rem',
+  toggleShortcutFontWeight: '600',
+
+  // Theme — menu
   menuHeaderBg:           '#4f46e5',
   featureIconColor:       '#374151',
   featureIconActiveColor: '#ffffff',
