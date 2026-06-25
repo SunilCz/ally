@@ -18,38 +18,79 @@
     z-index: var(--acc-widget-z-index, 100000);
     left: 30px;
     bottom: 30px;
-    border-radius: 50%;
+    border-radius: var(--acc-toggle-btn-border-radius, 50%);
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: var(--acc-button-size, 48px);
     height: var(--acc-button-size, 48px);
     display: flex;
     cursor: pointer;
     outline: none !important;
     border: none !important;
-    box-shadow: inset 0 0 0 4px var(--acc-toggle-ring-color, var(--acc-primary-color, #1976d2)), inset 0 0 0 6px white, 0 2px 5px rgba(0,0,0,0.2) !important;
+    padding: 0;
+    box-shadow: var(--acc-toggle-btn-shadow, 0 4px 14px rgba(0,0,0,0.22)) !important;
     background: var(--acc-toggle-btn-bg, var(--acc-primary-color, #1976d2)) !important;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-    overflow: visible;
+    transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    overflow: hidden;
+    white-space: nowrap;
   }
-  
+
   .acc-toggle-btn .acc-toggle-icon {
-    width: 60%;
-    height: 60%;
+    flex: 0 0 var(--acc-button-size, 48px);
+    width: var(--acc-button-size, 48px);
+    height: var(--acc-button-size, 48px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .acc-toggle-btn .acc-toggle-icon svg {
-    width: 100%;
-    height: 100%;
+    width: 55%;
+    height: 55%;
     fill: var(--acc-toggle-icon-color, #ffffff);
     transition: none;
   }
-  
-  .acc-toggle-btn:hover {
-    transform: scale(1.12);
+
+  .acc-toggle-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-right: 12px;
+    opacity: 0;
+    transition: opacity 150ms ease;
+    pointer-events: none;
+  }
+
+  .acc-toggle-label {
+    color: var(--acc-toggle-icon-color, #ffffff);
+    font-size: var(--acc-toggle-label-font-size, 0.875rem);
+    font-weight: var(--acc-toggle-label-font-weight, 700);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .acc-toggle-shortcut {
+    color: var(--acc-toggle-icon-color, #ffffff);
+    font-size: var(--acc-toggle-shortcut-font-size, 0.65em);
+    font-weight: var(--acc-toggle-shortcut-font-weight, 600);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+
+  .acc-toggle-btn:not([aria-expanded="true"]):hover,
+  .acc-toggle-btn:not([aria-expanded="true"]):focus-visible {
+    width: calc(var(--acc-button-size, 48px) * 3.2);
+    transform: translateY(-2px);
+    box-shadow: var(--acc-toggle-btn-shadow-hover, 0 8px 22px rgba(0,0,0,0.22)) !important;
+  }
+
+  .acc-toggle-btn:not([aria-expanded="true"]):hover .acc-toggle-content,
+  .acc-toggle-btn:not([aria-expanded="true"]):focus-visible .acc-toggle-content {
+    opacity: 1;
+    transition-delay: 50ms;
   }
 
   .acc-toggle-btn::before,
@@ -58,7 +99,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 44%;
+    width: calc(var(--acc-button-size, 48px) * 0.44);
     height: 2.6px;
     border-radius: 999px;
     background: var(--acc-text-color-inverted, #fff);
@@ -69,8 +110,9 @@
   }
 
   .acc-toggle-btn[aria-expanded="true"] {
+    width: var(--acc-button-size, 48px) !important;
     background: var(--acc-toggle-btn-bg, var(--acc-primary-color, #1976d2)) !important;
-    box-shadow: inset 0 0 0 4px var(--acc-toggle-ring-color, var(--acc-primary-color, #1976d2)), inset 0 0 0 6px white, 0 6px 14px rgba(0, 0, 0, 0.24) !important;
+    box-shadow: var(--acc-toggle-btn-shadow, 0 4px 14px rgba(0,0,0,0.22)) !important;
   }
 
   .acc-toggle-btn[aria-expanded="true"] .acc-toggle-icon svg {

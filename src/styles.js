@@ -115,6 +115,14 @@ export const styleMethods = {
       '--acc-button-size': t.buttonSize,
 
       // ── Granular theme vars ─────────────────────────────────────────────────
+      '--acc-toggle-btn-border-radius':   t.toggleButtonBorderRadius  || '50%',
+      '--acc-toggle-btn-padding-x':       t.toggleButtonPaddingX      || '0px',
+      '--acc-toggle-btn-shadow':          t.toggleButtonShadow        || '0 4px 14px rgba(0,0,0,0.22)',
+      '--acc-toggle-btn-shadow-hover':    t.toggleButtonShadowHover   || '0 8px 22px rgba(0,0,0,0.22)',
+      '--acc-toggle-label-font-size':     t.toggleLabelFontSize       || '1rem',
+      '--acc-toggle-label-font-weight':   t.toggleLabelFontWeight     || '700',
+      '--acc-toggle-shortcut-font-size':  t.toggleShortcutFontSize    || '0.7rem',
+      '--acc-toggle-shortcut-font-weight':t.toggleShortcutFontWeight  || '600',
       '--acc-toggle-btn-bg':              t.toggleButtonBg            || p,
       '--acc-toggle-ring-color':          t.toggleButtonRingColor     || p,
       '--acc-toggle-icon-color':          t.toggleButtonIconColor     || '#ffffff',

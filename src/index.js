@@ -393,7 +393,15 @@ class AllyWidget {
       'backgroundColor', 'textColor', 'textColorInverted',
       'cardBackground', 'borderColor', 'focusRingColor',
       'hoverColor', 'activeColor', 'borderRadius', 'buttonBorderRadius',
-      'headerHeight', 'focusBorderWidth', 'focusOutlineOffset', 'zIndex'
+      'headerHeight', 'focusBorderWidth', 'focusOutlineOffset', 'zIndex',
+      'toggleButtonBg', 'toggleButtonRingColor', 'toggleButtonIconColor', 'toggleButtonBorderRadius',
+      'toggleButtonPaddingX', 'toggleButtonShadow', 'toggleButtonShadowHover',
+      'toggleButtonLabel', 'toggleButtonShortcut',
+      'toggleLabelFontSize', 'toggleLabelFontWeight',
+      'toggleShortcutFontSize', 'toggleShortcutFontWeight',
+      'menuHeaderBg', 'menuHeaderColor',
+      'featureIconColor', 'featureIconActiveColor', 'featureButtonActiveBg',
+      'featureButtonActiveBorderColor', 'featureButtonHoverBg', 'sectionTitleColor'
     ];
 
     themeKeys.forEach((key) => {

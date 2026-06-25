@@ -599,6 +599,10 @@ export const uiMethods = {
         <div class="acc-widget">
           <a href="#" id="allyWidget" class="acc-toggle-btn" title="Open Accessibility Menu" role="button" aria-label="Open accessibility menu" aria-expanded="false">
             <span class="acc-toggle-icon" aria-hidden="true">${this.getWidgetIconMarkup(options?.icon)}</span>
+            <span class="acc-toggle-content" aria-hidden="true">
+              <span class="acc-toggle-label">${this.options.toggleButtonLabel || 'Accessibility'}</span>
+              ${this.options.toggleButtonShortcut ? `<span class="acc-toggle-shortcut">${this.options.toggleButtonShortcut}</span>` : ''}
+            </span>
             <span class="acc-violation-bubble" data-severity="warning" hidden> </span>
           </a>
         </div>
