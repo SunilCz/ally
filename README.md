@@ -223,9 +223,18 @@ Each element of the widget can be independently colored. Unset keys fall back to
 
 | Token | Default | Controls |
 |---|---|---|
-| `menuScale` | `1` | CSS `transform: scale()` applied to the whole panel — scales text, icons, padding uniformly. `transform-origin` is auto-set from `position`. E.g. `'0.85'` |
-| `menuMaxWidth` | `430px` | Maximum width of the panel. E.g. `'360px'` |
-| `menuFontSize` | `16px` | Base font size of the panel — affects text, not icons |
+| `menuScale` | `1` | CSS `transform: scale()` — scales the entire panel uniformly (text, icons, padding). `transform-origin` auto-set from `position`. E.g. `'0.85'` |
+| `menuMaxWidth` | `430px` | Maximum width of the panel |
+| `menuFontSize` | `16px` | Base font size of the panel |
+| `menuBorderRadius` | `16px` | Panel corner radius |
+| `menuContentPadding` | `14px` | Horizontal padding inside the panel |
+| `menuSectionGap` | `16px` | Gap between top-level sections (Speech, Text, Color…) |
+| `menuCategoryGap` | `10px` | Gap between items within a section |
+| `sectionTitleFontSize` | `14px` | Font size of section headings (Speech, Text…) |
+| `featureButtonGap` | `12px` | Gap between feature buttons in the grid |
+| `featureButtonPadding` | `10px` | Inner padding of each feature button |
+| `featureButtonFontSize` | `15px` | Base font size inside feature buttons |
+| `featureButtonLabelSize` | `13px` | Font size of feature button labels |
 | `featureIconSize` | `24px` | SVG icon size inside feature buttons |
 | `headerIconSize` | `28px` | SVG icon size in the menu header (close / back) |
 

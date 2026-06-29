@@ -52,10 +52,19 @@ export const WIDGET_THEME = {
   // ── Section headings ───────────────────────────────────────────────────────
   sectionTitleColor: '#6b7280',
 
-  // ── Panel sizing ───────────────────────────────────────────────────────────
+  // ── Panel sizing & layout ──────────────────────────────────────────────────
   menuMaxWidth: '',
   menuFontSize: '',
   menuScale: '',
+  menuBorderRadius: '',
+  menuContentPadding: '',
+  menuSectionGap: '',
+  menuCategoryGap: '',
+  sectionTitleFontSize: '',
+  featureButtonGap: '',
+  featureButtonPadding: '',
+  featureButtonFontSize: '',
+  featureButtonLabelSize: '',
   featureIconSize: '',
   headerIconSize: '',
 };

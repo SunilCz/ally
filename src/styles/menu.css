@@ -19,7 +19,7 @@
   --acc-content-inline-padding: 14px;
   --acc-menu-inline-gap: clamp(8px, 2.3vw, 18px);
   --acc-menu-block-gap: clamp(10px, 2.2vh, 20px);
-  border-radius: 16px;
+  border-radius: var(--acc-menu-border-radius, 16px);
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.2);
   transform: scale(var(--acc-menu-scale, 1));
   transform-origin: var(--acc-menu-transform-origin, bottom left);
@@ -391,14 +391,14 @@
 .acc-options-all {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--acc-section-gap, 16px);
   padding: 0 var(--acc-content-inline-padding) 12px;
 }
 
 .acc-option-category {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--acc-category-gap, 10px);
 }
 
 .acc-option-category-interaction {
@@ -406,7 +406,7 @@
 }
 
 .acc-option-category .acc-section-title {
-  font-size: 14px !important;
+  font-size: var(--acc-section-title-font-size, 14px) !important;
   font-weight: 700 !important;
   letter-spacing: 0.01em !important;
   text-transform: none;
@@ -417,7 +417,7 @@
 .acc-options {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--acc-feature-btn-gap, 12px);
   margin: 0;
 }
 
@@ -656,13 +656,13 @@
 .acc-btn {
   aspect-ratio: 11 / 8;
   border-radius: var(--acc-border-radius);
-  padding: 10px;
+  padding: var(--acc-feature-btn-padding, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  font-size: 15px !important;
+  font-size: var(--acc-feature-btn-font-size, 15px) !important;
   background: var(--acc-card-bg) !important;
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
   transition: background-color 0.2s ease;
@@ -686,7 +686,7 @@
 }
 
 .acc-btn .acc-label, .acc-text-adjust .acc-label div {
-  font-size: 13px !important;
+  font-size: var(--acc-feature-btn-label-size, 13px) !important;
   font-weight: 600 !important;
 }
 

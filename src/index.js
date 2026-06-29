@@ -402,7 +402,10 @@ class AllyWidget {
       'menuHeaderBg', 'menuHeaderColor',
       'featureIconColor', 'featureIconActiveColor', 'featureButtonActiveBg',
       'featureButtonActiveBorderColor', 'featureButtonHoverBg', 'sectionTitleColor',
-      'menuMaxWidth', 'menuFontSize', 'menuScale', 'featureIconSize', 'headerIconSize'
+      'menuMaxWidth', 'menuFontSize', 'menuScale', 'menuBorderRadius',
+      'menuContentPadding', 'menuSectionGap', 'menuCategoryGap', 'sectionTitleFontSize',
+      'featureButtonGap', 'featureButtonPadding', 'featureButtonFontSize', 'featureButtonLabelSize',
+      'featureIconSize', 'headerIconSize'
     ];
 
     themeKeys.forEach((key) => {
