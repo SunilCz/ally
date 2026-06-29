@@ -219,6 +219,16 @@ Each element of the widget can be independently colored. Unset keys fall back to
 |---|---|---|
 | `sectionTitleColor` | `#6b7280` | Section heading text color |
 
+**Panel sizing & scaling**
+
+| Token | Default | Controls |
+|---|---|---|
+| `menuScale` | `1` | CSS `transform: scale()` applied to the whole panel — scales text, icons, padding uniformly. `transform-origin` is auto-set from `position`. E.g. `'0.85'` |
+| `menuMaxWidth` | `430px` | Maximum width of the panel. E.g. `'360px'` |
+| `menuFontSize` | `16px` | Base font size of the panel — affects text, not icons |
+| `featureIconSize` | `24px` | SVG icon size inside feature buttons |
+| `headerIconSize` | `28px` | SVG icon size in the menu header (close / back) |
+
 ---
 
 ## Feature Keys
