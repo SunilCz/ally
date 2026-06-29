@@ -103,12 +103,34 @@ widget.startAccessibleWebWidget();
 | `theme` | `object` | — | All theme tokens nested under one key (alternative to passing tokens at the top level) |
 | `ttsNativeVoiceName` | `string` | — | Exact browser voice name to prefer for TTS |
 | `ttsNativeVoiceLang` | `string` | — | BCP-47 language tag for TTS voice selection (e.g. `'ne-NP'`) |
+| `ttsProxyUrl` | `string` | — | URL of your server-side TTS proxy (see [Nepali TTS — Server Proxy](#nepali-tts--server-proxy)). When set, the widget POSTs `?text=…&lang=ne` to this URL instead of calling Google directly. |
 | `ttsRate` | `number` | `1` | Speech rate — `0.5` to `2` |
 | `ttsPitch` | `number` | `1` | Speech pitch — `0` to `2` |
 | `onOpen` | `function` | — | Called when the panel opens |
 | `onClose` | `function` | — | Called when the panel closes |
 | `onFeatureToggle` | `function(key, enabled)` | — | Called on every feature toggle |
 | `onReset` | `function` | — | Called when the user resets all settings |
+
+---
+
+## Nepali TTS — Server Proxy
+
+Most desktop browsers do not ship a `ne-NP` (Nepali) voice. When `lang: 'ne'` is set and no native voice is found, the widget automatically falls back to Google Translate TTS. However, Google's TTS endpoint blocks direct browser requests.
+
+The solution is a **server-side proxy**: a small endpoint on your own server that forwards the request to Google with the correct headers. Set `ttsProxyUrl` to your proxy's path and the widget will call it instead.
+
+```js
+AllyWidget.init({
+  lang: 'ne',
+  ttsProxyUrl: '/api/tts',   // your proxy endpoint
+});
+```
+
+The widget calls: `GET /api/tts?text=<encoded-text>&lang=ne`
+
+Your proxy must return the audio (`audio/mpeg`) directly in the response body.
+
+See [INTEGRATION.md → Nepali TTS Proxy](INTEGRATION.md#nepali-tts-proxy) for copy-paste implementations in Next.js, Express, PHP, Laravel, and WordPress.
 
 ---
 

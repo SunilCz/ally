@@ -1181,7 +1181,15 @@ export const featureMethods = {
   },
 
   supportsTextToSpeech() {
+    if (this.options?.lang === 'ne') return true;
     return this.supportsSpeechSynthesis();
+  },
+
+  isNepaliGoogleFallback() {
+    if (this.options?.lang !== 'ne') return false;
+    if (!this.supportsSpeechSynthesis()) return true;
+    const voices = window.speechSynthesis.getVoices?.() || [];
+    return !voices.some((v) => String(v.lang || '').toLowerCase().startsWith('ne'));
   },
 
   normalizeSpeechLanguage(languageCode = 'en') {
@@ -1616,11 +1624,77 @@ export const featureMethods = {
     this.speakNextTtsChunk(sessionId);
   },
 
+  startGoogleTtsPlayback({ restart = false } = {}) {
+    const hasQueue = restart || !this.ttsQueue.length || this.ttsQueueIndex >= this.ttsQueue.length
+      ? this.ensureTtsQueue()
+      : true;
+    if (!hasQueue) { this.stopSpeech(); return; }
+
+    const sessionId = this.ttsSessionId + 1;
+    this.ttsSessionId = sessionId;
+    if (this.googleTtsAudio) {
+      this.googleTtsAudio.pause();
+      this.googleTtsAudio = null;
+    }
+    this.ttsStatus = 'reading';
+    this.speakNextGoogleTtsChunk(sessionId);
+  },
+
+  speakNextGoogleTtsChunk(sessionId) {
+    if (sessionId !== this.ttsSessionId) return;
+    if (this.ttsQueueIndex >= this.ttsQueue.length) {
+      this.ttsStatus = 'stopped';
+      this.setActiveSpeechTarget(null);
+      return;
+    }
+
+    const chunk = this.ttsQueue[this.ttsQueueIndex];
+    if (!chunk) {
+      this.ttsQueueIndex += 1;
+      this.speakNextGoogleTtsChunk(sessionId);
+      return;
+    }
+
+    const proxyUrl = this.options?.ttsProxyUrl;
+    const url = proxyUrl
+      ? `${proxyUrl}?text=${encodeURIComponent(chunk)}&lang=ne`
+      : `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunk)}&tl=ne&client=gtx&ttsspeed=1`;
+    const audio = new Audio(url);
+    this.googleTtsAudio = audio;
+
+    audio.onplay = () => { if (sessionId === this.ttsSessionId) this.ttsStatus = 'reading'; };
+    audio.onended = () => {
+      if (sessionId !== this.ttsSessionId) return;
+      this.ttsQueueIndex += 1;
+      this.speakNextGoogleTtsChunk(sessionId);
+    };
+    audio.onerror = () => {
+      if (sessionId !== this.ttsSessionId) return;
+      this.ttsStatus = 'stopped';
+      this.setActiveSpeechTarget(null);
+    };
+
+    audio.play().catch(() => {
+      if (sessionId !== this.ttsSessionId) return;
+      this.ttsStatus = 'stopped';
+      this.setActiveSpeechTarget(null);
+    });
+  },
+
   startSpeechPlayback({ restart = false } = {}) {
-    this.startNativeSpeechPlayback({ restart });
+    if (this.isNepaliGoogleFallback()) {
+      this.startGoogleTtsPlayback({ restart });
+    } else {
+      this.startNativeSpeechPlayback({ restart });
+    }
   },
 
   pauseSpeech() {
+    if (this.googleTtsAudio && !this.googleTtsAudio.paused) {
+      this.googleTtsAudio.pause();
+      this.ttsStatus = 'paused';
+      return;
+    }
     if (!this.supportsSpeechSynthesis()) return;
     const synth = window.speechSynthesis;
     if (synth.speaking && !synth.paused) {
@@ -1630,6 +1704,11 @@ export const featureMethods = {
   },
 
   resumeSpeech() {
+    if (this.googleTtsAudio && this.googleTtsAudio.paused && this.ttsStatus === 'paused') {
+      this.googleTtsAudio.play().catch(() => {});
+      this.ttsStatus = 'reading';
+      return;
+    }
     if (!this.supportsSpeechSynthesis()) return;
     const synth = window.speechSynthesis;
     if (synth.paused) {
@@ -1645,6 +1724,10 @@ export const featureMethods = {
     this.ttsSessionId += 1;
     if (synth && (synth.speaking || synth.paused)) {
       synth.cancel();
+    }
+    if (this.googleTtsAudio) {
+      this.googleTtsAudio.pause();
+      this.googleTtsAudio = null;
     }
     this.ttsUtterance = null;
     this.ttsQueueIndex = 0;
