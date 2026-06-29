@@ -51,4 +51,9 @@ export const WIDGET_THEME = {
 
   // ── Section headings ───────────────────────────────────────────────────────
   sectionTitleColor: '#6b7280',
+
+  // ── Panel sizing ───────────────────────────────────────────────────────────
+  menuMaxWidth: '',
+  menuFontSize: '',
+  menuScale: '',
 };

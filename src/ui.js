@@ -335,12 +335,15 @@ export const uiMethods = {
       const offsetY = normalizedOffset[1] ?? 25;
 
       const isRightAligned = position === 'bottom-right' || position === 'top-right' || this.widgetTheme.menuPosition === 'right';
+      const isTopAligned = position === 'top-right' || position === 'top-left';
       if (isRightAligned) {
         menu.style.right = `${offsetX}px`;
         menu.style.left = 'auto';
+        menu.style.setProperty('--acc-menu-transform-origin', isTopAligned ? 'top right' : 'bottom right');
       } else {
         menu.style.left = `${offsetX}px`;
         menu.style.right = 'auto';
+        menu.style.setProperty('--acc-menu-transform-origin', isTopAligned ? 'top left' : 'bottom left');
       }
       const buttonSize = size !== undefined && size !== null && String(size).trim() !== ''
         ? this.normalizeButtonSize(size)

@@ -134,6 +134,9 @@ export const styleMethods = {
       '--acc-feature-btn-active-border':  t.featureButtonActiveBorderColor || p,
       '--acc-feature-btn-hover-bg':       t.featureButtonHoverBg      || '#f3f4f6',
       '--acc-section-title-color':        t.sectionTitleColor         || '#6b7280',
+      '--acc-menu-max-width':             t.menuMaxWidth              || undefined,
+      '--acc-menu-font-size':             t.menuFontSize              || undefined,
+      '--acc-menu-scale':                 t.menuScale                 || undefined,
     };
     Object.entries(vars).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {

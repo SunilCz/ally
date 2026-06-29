@@ -401,7 +401,8 @@ class AllyWidget {
       'toggleShortcutFontSize', 'toggleShortcutFontWeight',
       'menuHeaderBg', 'menuHeaderColor',
       'featureIconColor', 'featureIconActiveColor', 'featureButtonActiveBg',
-      'featureButtonActiveBorderColor', 'featureButtonHoverBg', 'sectionTitleColor'
+      'featureButtonActiveBorderColor', 'featureButtonHoverBg', 'sectionTitleColor',
+      'menuMaxWidth', 'menuFontSize', 'menuScale'
     ];
 
     themeKeys.forEach((key) => {
