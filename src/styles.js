@@ -137,6 +137,8 @@ export const styleMethods = {
       '--acc-menu-max-width':             t.menuMaxWidth              || undefined,
       '--acc-menu-font-size':             t.menuFontSize              || undefined,
       '--acc-menu-scale':                 t.menuScale                 || undefined,
+      '--acc-feature-icon-size':          t.featureIconSize           || undefined,
+      '--acc-header-icon-size':           t.headerIconSize            || undefined,
     };
     Object.entries(vars).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {

@@ -402,7 +402,7 @@ class AllyWidget {
       'menuHeaderBg', 'menuHeaderColor',
       'featureIconColor', 'featureIconActiveColor', 'featureButtonActiveBg',
       'featureButtonActiveBorderColor', 'featureButtonHoverBg', 'sectionTitleColor',
-      'menuMaxWidth', 'menuFontSize', 'menuScale'
+      'menuMaxWidth', 'menuFontSize', 'menuScale', 'featureIconSize', 'headerIconSize'
     ];
 
     themeKeys.forEach((key) => {

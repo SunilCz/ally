@@ -141,12 +141,12 @@
 
 .acc-menu-header svg {
   fill: var(--acc-menu-header-color, var(--acc-text-color-inverted)) !important;
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  min-height: 28px !important;
-  max-width: 28px !important;
-  max-height: 28px !important;
+  width: var(--acc-header-icon-size, 28px) !important;
+  height: var(--acc-header-icon-size, 28px) !important;
+  min-width: var(--acc-header-icon-size, 28px) !important;
+  min-height: var(--acc-header-icon-size, 28px) !important;
+  max-width: var(--acc-header-icon-size, 28px) !important;
+  max-height: var(--acc-header-icon-size, 28px) !important;
 }
 
 .acc-menu-header > div {
@@ -701,12 +701,12 @@
 }
 
 .acc-btn svg {
-  width: 24px !important;
-  height: 24px !important;
-  min-width: 24px !important;
-  min-height: 24px !important;
-  max-width: 24px !important;
-  max-height: 24px !important;
+  width: var(--acc-feature-icon-size, 24px) !important;
+  height: var(--acc-feature-icon-size, 24px) !important;
+  min-width: var(--acc-feature-icon-size, 24px) !important;
+  min-height: var(--acc-feature-icon-size, 24px) !important;
+  max-width: var(--acc-feature-icon-size, 24px) !important;
+  max-height: var(--acc-feature-icon-size, 24px) !important;
   fill: var(--acc-feature-icon-color, var(--acc-text-color));
 }
 

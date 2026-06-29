@@ -56,4 +56,6 @@ export const WIDGET_THEME = {
   menuMaxWidth: '',
   menuFontSize: '',
   menuScale: '',
+  featureIconSize: '',
+  headerIconSize: '',
 };
