@@ -402,7 +402,7 @@ class AllyWidget {
       'menuHeaderBg', 'menuHeaderColor',
       'featureIconColor', 'featureIconActiveColor', 'featureButtonActiveBg',
       'featureButtonActiveBorderColor', 'featureButtonHoverBg', 'sectionTitleColor',
-      'menuMaxWidth', 'menuFontSize', 'menuScale', 'menuBorderRadius',
+      'menuMaxWidth', 'menuMaxHeight', 'menuFontSize', 'menuScale', 'menuBorderRadius',
       'menuContentPadding', 'menuSectionGap', 'menuCategoryGap', 'sectionTitleFontSize',
       'featureButtonGap', 'featureButtonPadding', 'featureButtonFontSize', 'featureButtonLabelSize',
       'featureIconSize', 'headerIconSize'

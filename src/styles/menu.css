@@ -10,7 +10,7 @@
   overflow: hidden;
   background: var(--acc-bg-color);
   width: min(var(--acc-menu-max-width, 430px), calc(100vw - (var(--acc-menu-inline-gap, 12px) * 2)));
-  max-height: calc(100dvh - var(--acc-menu-block-gap, 12px) * 2);
+  max-height: var(--acc-menu-max-height, calc(100dvh - var(--acc-menu-block-gap, 12px) * 2));
   display: flex;
   flex-direction: column;
   line-height: 1.5;
